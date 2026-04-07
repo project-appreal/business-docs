@@ -1,0 +1,43 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Appreal API",
+  "colors": {
+    "primary": "#0D9373"
+  },
+  "api": {
+    "openapi": "openapi.json",
+    "playground": {
+      "display": "interactive",
+      "proxy": true
+    },
+    "examples": {
+      "languages": ["curl", "javascript", "python"],
+      "defaults": "required"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["index", "authentication"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Endpoints",
+            "openapi": {
+              "source": "openapi.json",
+              "directory": "api-reference"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
