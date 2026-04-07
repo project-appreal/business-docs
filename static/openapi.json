@@ -3190,5 +3190,10 @@
         "properties": {}
       }
     }
-  }
+  },
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ]
 }

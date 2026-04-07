@@ -1,0 +1,61 @@
+---
+id: authentication
+title: Authentication
+description: How to authenticate requests to the Appreal Business API
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+All Business API requests require your API key in the `x-api-key` header.
+
+:::warning
+Your API key grants full access to your account. Never expose it in client-side code,
+public repositories, or browser console output.
+:::
+
+## Making Authenticated Requests
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl https://api.appreal.com/api/business/v1/invoices \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const res = await fetch('https://api.appreal.com/api/business/v1/invoices', {
+  headers: { 'x-api-key': process.env.API_KEY }
+});
+```
+
+  </TabItem>
+</Tabs>
+
+## Getting Your API Key
+
+1. **Log into the Merchant Dashboard** — Navigate to the Appreal Merchant Dashboard and sign in.
+2. **Go to API Keys** — Navigate to **Settings → API Keys**.
+3. **Generate a new key** — Click **Generate New Key**. Copy the key immediately — it will only be shown once.
+
+## Security Best Practices
+
+- Store your API key in an environment variable, never hardcode it
+- Use separate keys for staging and production
+- Rotate keys immediately if you suspect compromise
+
+## Using the Playground
+
+:::note
+The interactive playground on each API Reference page sends real requests to your
+account. Enter your API key in the authentication field on any endpoint page.
+:::
+
+| HTTP Status | Meaning |
+|---|---|
+| `401` | Missing or invalid API key |
+| `403` | Key valid but insufficient permissions |
