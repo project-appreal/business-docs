@@ -1582,6 +1582,14 @@
     {
       "url": "https://api.appreal.com/api/business/v1",
       "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    },
+    {
+      "url": "http://localhost:8000/api/business/v1",
+      "description": "Local"
     }
   ],
   "components": {
