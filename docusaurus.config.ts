@@ -5,7 +5,7 @@ import type { ScalarOptions } from '@scalar/docusaurus';
 const config: Config = {
   title: 'Appreal API',
   tagline: 'Accept cryptocurrency payments with a single API',
-  url: 'https://docs.appreal.com',
+  url: 'https://appreal-docs.netlify.app',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   markdown: {
