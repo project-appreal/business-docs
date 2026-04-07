@@ -2127,12 +2127,8 @@
             "description": "Public balance identifier (CUID2)"
           },
           "amount": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Decimal"
-              }
-            ],
-            "description": "Balance amount"
+            "description": "Balance amount",
+            "type": "string"
           },
           "amountInWei": {
             "type": "string",
@@ -3184,10 +3180,6 @@
       "UpdatePayoutLimitDto": {
         "type": "object",
         "properties": {}
-      },
-      "Decimal": {
-        "type": "string",
-        "description": "Arbitrary-precision decimal number represented as a string"
       }
     }
   },
