@@ -36,7 +36,7 @@ const config: Config = {
       {
         label: 'API Reference',
         route: '/api',
-        showNavLink: true,
+        showNavLink: false,
         configuration: {
           url: '/openapi.json',
         },
