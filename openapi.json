@@ -4389,7 +4389,71 @@
     "schemas": {
       "CreateInvoiceDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "customerEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "Customer email address"
+          },
+          "customerName": {
+            "type": "string",
+            "description": "Customer display name"
+          },
+          "notificationEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "Email to receive payment notifications"
+          },
+          "reference": {
+            "description": "Arbitrary reference string or object to attach to the invoice",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ]
+          },
+          "invoice": {
+            "type": "object",
+            "description": "Invoice amount and currency details",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "description": "Invoice amount (must be positive)",
+                "example": 10.5
+              },
+              "sourceCurrency": {
+                "type": "string",
+                "description": "Source currency symbol or alias (optional)"
+              },
+              "destinationCurrency": {
+                "type": "string",
+                "description": "Destination currency symbol or alias"
+              }
+            },
+            "required": [
+              "amount",
+              "destinationCurrency"
+            ]
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "URL to redirect the customer after payment"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Idempotency key to prevent duplicate invoices"
+          },
+          "webhookUrl": {
+            "type": "string",
+            "description": "Webhook URL to receive payment status updates"
+          }
+        },
+        "required": [
+          "invoice"
+        ]
       },
       "UpdatePaymentMethod": {
         "type": "object",
@@ -4630,10 +4694,6 @@
         "type": "object",
         "properties": {}
       },
-      "i": {
-        "type": "object",
-        "properties": {}
-      },
       "CurrencyDto": {
         "type": "object",
         "properties": {
@@ -4856,31 +4916,20 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Balance ID"
-          },
-          "publicId": {
-            "type": "string",
             "description": "Public balance identifier (CUID2)"
           },
-          "accountId": {
-            "type": "string",
-            "description": "Account ID"
-          },
-          "currencyId": {
-            "type": "string",
-            "description": "Currency ID"
-          },
           "amount": {
-            "description": "Balance amount",
             "allOf": [
               {
-                "$ref": "#/components/schemas/i"
+                "$ref": "#/components/schemas/Decimal"
               }
-            ]
+            ],
+            "description": "Balance amount"
           },
           "amountInWei": {
-            "type": "object",
-            "description": "Balance amount in Wei"
+            "type": "string",
+            "description": "Balance amount in Wei (for on-chain assets)",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -4891,50 +4940,29 @@
             ],
             "description": "Balance status"
           },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Created timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Updated timestamp"
+          },
           "currency": {
             "description": "Currency details",
             "allOf": [
               {
-                "$ref": "#/components/schemas/CurrencyDto"
+                "$ref": "#/components/schemas/BusinessCurrencyDto"
               }
             ]
-          },
-          "account": {
-            "description": "Account details",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AccountDto"
-              }
-            ]
-          },
-          "network": {
-            "description": "Network details",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/NetworkDto"
-              }
-            ]
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Created timestamp"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Updated timestamp"
           }
         },
         "required": [
           "id",
-          "publicId",
-          "accountId",
-          "currencyId",
           "amount",
           "status",
-          "currency",
-          "account",
           "createdAt",
           "updatedAt"
         ]
@@ -5534,8 +5562,12 @@
             "description": "Currency logo URL"
           },
           "network": {
-            "type": "object",
-            "description": "Network information"
+            "description": "Network the currency is deployed on",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BusinessNetworkDto"
+              }
+            ]
           }
         },
         "required": [
@@ -5944,6 +5976,10 @@
       "UpdatePayoutLimitDto": {
         "type": "object",
         "properties": {}
+      },
+      "Decimal": {
+        "type": "string",
+        "description": "Arbitrary-precision decimal number represented as a string"
       }
     }
   }
