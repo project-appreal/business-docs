@@ -1,6 +1,7 @@
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import type * as OpenApiPlugin from 'docusaurus-plugin-openapi-docs';
+import type { ScalarOptions } from '@scalar/docusaurus';
 
 const config: Config = {
   title: 'Appreal API',
@@ -32,6 +33,17 @@ const config: Config = {
   ],
 
   plugins: [
+    [
+      '@scalar/docusaurus',
+      {
+        label: 'API Client',
+        route: '/api-client',
+        showNavLink: false,
+        configuration: {
+          url: '/openapi.json',
+        },
+      } as ScalarOptions,
+    ],
     [
       'docusaurus-plugin-openapi-docs',
       {
@@ -70,6 +82,11 @@ const config: Config = {
           sidebarId: 'apiSidebar',
           position: 'left',
           label: 'API Reference',
+        },
+        {
+          label: 'API Client',
+          to: '/api-client',
+          position: 'left',
         },
         {
           type: 'html',
