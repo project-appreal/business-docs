@@ -1,0 +1,220 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Get specific payout details for business API key",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/payout/{id}": {
+      "get": {
+        "operationId": "PayoutBusinessController_getBusinessPayoutDetails",
+        "summary": "Get specific payout details for business API key",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Payout public ID (24-char alphanumeric)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business payout details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutBusinessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API key required"
+          },
+          "403": {
+            "description": "Forbidden - Business API access or ownership required"
+          },
+          "404": {
+            "description": "Payout not found"
+          }
+        },
+        "tags": [
+          "Payout"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {
+      "PayoutBusinessResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Public payout identifier (CUID2)"
+          },
+          "number": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "REQUESTED",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED",
+              "CANCELLED"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "FIAT_FIAT",
+              "FIAT_CRYPTO",
+              "CRYPTO_FIAT",
+              "CRYPTO_CRYPTO"
+            ]
+          },
+          "amount": {
+            "type": "string"
+          },
+          "exchangeRate": {
+            "type": "string"
+          },
+          "feeAmount": {
+            "type": "string"
+          },
+          "receivedAmount": {
+            "type": "string"
+          },
+          "referenceText": {
+            "type": "string"
+          },
+          "referenceImage": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "sourceCurrency": {
+            "$ref": "#/components/schemas/BusinessCurrencyDto"
+          },
+          "destinationCurrency": {
+            "$ref": "#/components/schemas/BusinessCurrencyDto"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "status",
+          "type",
+          "amount",
+          "exchangeRate",
+          "feeAmount",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "BusinessCurrencyDto": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "currencyType": {
+            "type": "string",
+            "enum": [
+              "FIAT",
+              "CRYPTO"
+            ]
+          },
+          "decimals": {
+            "type": "number"
+          },
+          "paymentDecimals": {
+            "type": "number"
+          },
+          "contractAddress": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "network": {
+            "$ref": "#/components/schemas/BusinessNetworkDto"
+          }
+        },
+        "required": [
+          "symbol",
+          "name"
+        ]
+      },
+      "BusinessNetworkDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "networkName": {
+            "type": "string"
+          },
+          "blockchainNetworkType": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "blockExplorerUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "chainId",
+          "network",
+          "networkName"
+        ]
+      }
+    }
+  }
+}

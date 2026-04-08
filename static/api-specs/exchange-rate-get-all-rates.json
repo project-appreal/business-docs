@@ -1,0 +1,193 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Get all crypto assets with exchange rates",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/exchange-rates": {
+      "get": {
+        "operationId": "ExchangeRateBusinessController_getAllRates",
+        "summary": "Get all crypto assets with exchange rates",
+        "description": "Returns all supported crypto assets with their exchange rates to fiat currencies and supported networks.",
+        "parameters": [
+          {
+            "name": "currencies",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated list of fiat currency symbols to filter (e.g., USD,IDR)",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Exchange rates retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllRatesResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid API key"
+          }
+        },
+        "tags": [
+          "Exchange Rates"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {
+      "AllRatesResponseDto": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "description": "List of all crypto assets with rates",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CryptoAssetRatesDto"
+            }
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp when rates were fetched"
+          },
+          "validUntil": {
+            "type": "string",
+            "description": "Timestamp when rates expire and should be refreshed"
+          }
+        },
+        "required": [
+          "assets",
+          "timestamp",
+          "validUntil"
+        ]
+      },
+      "CryptoAssetRatesDto": {
+        "type": "object",
+        "properties": {
+          "asset": {
+            "type": "string",
+            "description": "Crypto asset symbol"
+          },
+          "assetName": {
+            "type": "string",
+            "description": "Crypto asset name"
+          },
+          "logo": {
+            "type": "string",
+            "description": "Asset logo URL"
+          },
+          "networks": {
+            "description": "Supported networks/chains for this asset",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NetworkInfoDto"
+            }
+          },
+          "rates": {
+            "type": "object",
+            "description": "Exchange rates to fiat currencies",
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "asset",
+          "assetName",
+          "networks",
+          "rates"
+        ]
+      },
+      "NetworkInfoDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "string",
+            "description": "Chain ID"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network identifier (e.g., ethereum, tron)"
+          },
+          "networkName": {
+            "type": "string",
+            "description": "Human-readable network name"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Currency symbol on this network"
+          },
+          "name": {
+            "type": "string",
+            "description": "Currency name on this network"
+          },
+          "chainLogo": {
+            "type": "string",
+            "description": "Chain logo URL"
+          },
+          "logo": {
+            "type": "string",
+            "description": "Currency logo URL"
+          },
+          "contractAddress": {
+            "type": "string",
+            "description": "Contract address (for tokens)"
+          },
+          "decimals": {
+            "type": "number",
+            "description": "Token decimals (blockchain precision)"
+          },
+          "paymentDecimals": {
+            "type": "number",
+            "description": "Payment decimals (display precision)"
+          }
+        },
+        "required": [
+          "chainId",
+          "network",
+          "networkName"
+        ]
+      }
+    }
+  }
+}

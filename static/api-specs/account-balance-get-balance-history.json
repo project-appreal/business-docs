@@ -1,0 +1,190 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Get balance history for a specific account balance",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/account-balances/{balanceId}/history": {
+      "get": {
+        "operationId": "AccountBalanceBusinessController_getBalanceHistory",
+        "summary": "Get balance history for a specific account balance",
+        "parameters": [
+          {
+            "name": "balanceId",
+            "required": true,
+            "in": "path",
+            "description": "Account balance public ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100000,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "desc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Filter by history type (INVOICE, PAYOUT, PAYOUT_FEE, ADJUSTMENT)",
+            "schema": {
+              "enum": [
+                "INVOICE",
+                "PAYOUT",
+                "PAYOUT_FEE",
+                "ADJUSTMENT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by history status (CREDIT, DEBIT, NEGATIVE_ADJ)",
+            "schema": {
+              "enum": [
+                "CREDIT",
+                "DEBIT",
+                "NEGATIVE_ADJ"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter by start date (ISO 8601 format)",
+            "schema": {
+              "example": "2024-01-01T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter by end date (ISO 8601 format)",
+            "schema": {
+              "example": "2024-12-31T23:59:59.999Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "currencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by currency ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance history retrieved successfully"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key"
+          },
+          "403": {
+            "description": "Forbidden - Balance does not belong to business"
+          },
+          "404": {
+            "description": "Account balance not found"
+          }
+        },
+        "tags": [
+          "Balances"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {}
+  }
+}

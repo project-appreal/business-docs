@@ -1,0 +1,113 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Inquire account details for business API key",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/payout/inquire-account": {
+      "post": {
+        "operationId": "PayoutBusinessController_inquireBusinessAccount",
+        "summary": "Inquire account details for business API key",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountInquiryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The account details have been retrieved successfully."
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized - API key required"
+          },
+          "403": {
+            "description": "Forbidden - Business API access required"
+          }
+        },
+        "tags": [
+          "Payout"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {
+      "AccountInquiryDto": {
+        "type": "object",
+        "properties": {
+          "bankCode": {
+            "type": "string",
+            "description": "Bank code for the account",
+            "minLength": 1
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Account number to inquire",
+            "minLength": 1
+          },
+          "destinationCurrencyId": {
+            "type": "string",
+            "description": "Target currency ID for the account inquiry",
+            "format": "uuid"
+          },
+          "sourceCurrencyId": {
+            "type": "string",
+            "description": "Source currency ID for the inquiry",
+            "format": "uuid"
+          },
+          "routingId": {
+            "type": "string",
+            "description": "Payout Provider Routing ID for routing the inquiry",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "bankCode",
+          "accountNumber",
+          "destinationCurrencyId",
+          "sourceCurrencyId",
+          "routingId"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Get payout information including fees and validation requirements for business API key",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/payout/payout-info": {
+      "post": {
+        "operationId": "PayoutBusinessController_getBusinessPayoutInfo",
+        "summary": "Get payout information including fees and validation requirements for business API key",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayoutInfoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The payout information has been retrieved successfully."
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized - API key required"
+          },
+          "403": {
+            "description": "Forbidden - Business API access required"
+          }
+        },
+        "tags": [
+          "Payout"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {
+      "PayoutInfoDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount to get payout info for",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "destinationCurrencyId": {
+            "type": "string",
+            "description": "Target currency ID (what the recipient will receive)",
+            "format": "uuid"
+          },
+          "sourceCurrencyId": {
+            "type": "string",
+            "description": "Source currency ID (what will be deducted from account)",
+            "format": "uuid"
+          },
+          "payoutType": {
+            "type": "string",
+            "description": "Type of payout",
+            "enum": [
+              "FIAT_FIAT",
+              "FIAT_CRYPTO",
+              "CRYPTO_FIAT",
+              "CRYPTO_CRYPTO"
+            ]
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID to get payout info for. Optional for merchants (uses their account), Account identifier",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "amount",
+          "destinationCurrencyId",
+          "sourceCurrencyId",
+          "payoutType"
+        ]
+      }
+    }
+  }
+}

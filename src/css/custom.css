@@ -29,6 +29,251 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
+/* Scalar theme integration (syncs with Docusaurus light/dark mode) */
+@import '@scalar/docusaurus/dist/theme.css';
+
+/* API endpoint page layout */
+.api-page-layout {
+  display: flex;
+  min-height: calc(100vh - 60px);
+}
+
+.api-sidebar {
+  width: 280px;
+  min-width: 280px;
+  border-right: 1px solid var(--ifm-toc-border-color);
+  padding: 12px 0;
+  overflow-y: auto;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  font-size: 0.85rem;
+}
+
+.api-sidebar__header {
+  padding: 4px 16px 12px;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+  margin-bottom: 8px;
+}
+
+.api-sidebar__all-link {
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.api-sidebar__group {
+  margin-bottom: 8px;
+}
+
+.api-sidebar__tag {
+  padding: 8px 16px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+  letter-spacing: 0.05em;
+}
+
+.api-sidebar__item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 16px;
+  text-decoration: none;
+  color: var(--ifm-font-color-base);
+  transition: background-color 0.15s;
+}
+
+.api-sidebar__item:hover {
+  background-color: var(--ifm-hover-overlay);
+  text-decoration: none;
+  color: var(--ifm-font-color-base);
+}
+
+.api-sidebar__item--active {
+  background-color: var(--ifm-color-primary-lightest);
+  font-weight: 600;
+}
+
+[data-theme='dark'] .api-sidebar__item--active {
+  background-color: var(--ifm-color-primary-darkest);
+}
+
+.api-sidebar__method {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 42px;
+}
+
+.api-sidebar__summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.api-page-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Hide Scalar's built-in sidebar on per-endpoint pages (we use our own) */
+.api-page-content .t-doc__sidebar {
+  display: none;
+}
+
+/* Hide Scalar intro section (Server/Auth/Client Libraries) on per-endpoint pages */
+.api-page-content .introduction-section,
+.api-page-content .scalar-reference-intro-server,
+.api-page-content .scalar-reference-intro-auth,
+.api-page-content .scalar-reference-intro-clients,
+.api-page-content .client-libraries {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .api-page-layout {
+    flex-direction: column;
+  }
+  .api-sidebar {
+    width: 100%;
+    min-width: 100%;
+    position: static;
+    height: auto;
+    max-height: 300px;
+    border-right: none;
+    border-bottom: 1px solid var(--ifm-toc-border-color);
+  }
+}
+
+/* API index page */
+.api-index {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.api-index h1 {
+  margin-bottom: 4px;
+}
+
+.api-index > p {
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 32px;
+}
+
+.api-index__group {
+  margin-bottom: 28px;
+}
+
+.api-index__group h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+.api-index__endpoints {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.api-index__endpoint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--ifm-font-color-base);
+  transition: background-color 0.15s;
+}
+
+.api-index__endpoint:hover {
+  background-color: var(--ifm-hover-overlay);
+  text-decoration: none;
+  color: var(--ifm-font-color-base);
+}
+
+.api-index__method {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.api-index__path {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+  min-width: 280px;
+}
+
+.api-index__summary {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* API config form on authentication page */
+.api-config {
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  background: var(--ifm-background-surface-color);
+}
+
+.api-config__field {
+  margin-bottom: 12px;
+}
+
+.api-config__label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.api-config__select,
+.api-config__input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.api-config__button {
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.api-config__button:hover {
+  background: var(--ifm-color-primary-dark);
+}
+
+.api-config__hint {
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-600);
+  margin: 8px 0 0;
+}
+
 .api-version-badge {
   background: var(--ifm-color-primary);
   color: white;

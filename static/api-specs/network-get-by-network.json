@@ -1,0 +1,121 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Get network by slug",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/networks/{network}": {
+      "get": {
+        "operationId": "NetworkBusinessController_getByNetwork",
+        "summary": "Get network by slug",
+        "parameters": [
+          {
+            "name": "network",
+            "required": true,
+            "in": "path",
+            "description": "Network slug (e.g., arbitrum-one)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Network retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkBusinessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key"
+          },
+          "404": {
+            "description": "Network not found"
+          }
+        },
+        "tags": [
+          "Networks"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {
+      "NetworkBusinessResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Network slug (e.g., arbitrum-one) — public identifier"
+          },
+          "chainId": {
+            "type": "string",
+            "description": "Chain ID"
+          },
+          "network": {
+            "type": "string",
+            "description": "Network identifier (e.g., ethereum, tron)"
+          },
+          "networkName": {
+            "type": "string",
+            "description": "Human-readable network name"
+          },
+          "blockchainType": {
+            "type": "string",
+            "description": "Blockchain type (EVM, TRON, SOLANA)",
+            "enum": [
+              "EVM",
+              "SOLANA",
+              "TRON",
+              "VIRTUAL"
+            ]
+          },
+          "logo": {
+            "type": "string",
+            "description": "Network logo URL"
+          }
+        },
+        "required": [
+          "id",
+          "chainId",
+          "network",
+          "networkName"
+        ]
+      }
+    }
+  }
+}

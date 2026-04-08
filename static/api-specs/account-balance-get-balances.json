@@ -1,0 +1,273 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Get account balances for the authenticated business",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/account-balances": {
+      "get": {
+        "operationId": "AccountBalanceBusinessController_getBalances",
+        "summary": "Get account balances for the authenticated business",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100000,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "description": "Sort direction",
+            "schema": {
+              "default": "desc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "currencyAlias",
+            "required": false,
+            "in": "query",
+            "description": "Filter balances by currency alias (e.g., usdt_binance)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currencyId",
+            "required": false,
+            "in": "query",
+            "deprecated": true,
+            "description": "Deprecated. Use currencyAlias instead. Will be removed in a future version.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isParentOnly",
+            "required": false,
+            "in": "query",
+            "description": "Filter to only include parent currencies (default: true)",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "currencyType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by currency type (FIAT, CRYPTO, NFT)",
+            "schema": {
+              "enum": [
+                "FIAT",
+                "CRYPTO"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account balances retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccountBalanceBusinessResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key"
+          }
+        },
+        "tags": [
+          "Balances"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {
+      "AccountBalanceBusinessResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Public balance identifier (CUID2)"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "amountInWei": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "ARCHIVED"
+            ]
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/BusinessCurrencyDto"
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "BusinessCurrencyDto": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "currencyType": {
+            "type": "string",
+            "enum": [
+              "FIAT",
+              "CRYPTO"
+            ]
+          },
+          "decimals": {
+            "type": "number"
+          },
+          "paymentDecimals": {
+            "type": "number"
+          },
+          "contractAddress": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "network": {
+            "$ref": "#/components/schemas/BusinessNetworkDto"
+          }
+        },
+        "required": [
+          "symbol",
+          "name"
+        ]
+      },
+      "BusinessNetworkDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "networkName": {
+            "type": "string"
+          },
+          "blockchainNetworkType": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "blockExplorerUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "chainId",
+          "network",
+          "networkName"
+        ]
+      }
+    }
+  }
+}

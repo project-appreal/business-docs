@@ -1,0 +1,352 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Create a new payout for business API key",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/payout": {
+      "post": {
+        "operationId": "PayoutBusinessController_createBusinessPayout",
+        "summary": "Create a new payout for business API key",
+        "parameters": [
+          {
+            "name": "x-idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Idempotency-Key",
+            "in": "header",
+            "description": "Optional idempotency key to prevent duplicate payout creation. Use a unique string (e.g., UUID) to ensure the same request returns the same result if retried.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The business payout has been created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutBusinessResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized - API key required"
+          },
+          "403": {
+            "description": "Forbidden - Business API access required"
+          },
+          "409": {
+            "description": "Conflict - Payout creation already in progress for this idempotency key"
+          }
+        },
+        "tags": [
+          "Payout"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {
+      "CreatePayoutDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Account ID that will be charged for this payout. Optional for merchants (uses their account), Account identifier",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount to be paid out",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "destinationCurrencyId": {
+            "type": "string",
+            "description": "Target currency ID (what the recipient will receive)",
+            "format": "uuid"
+          },
+          "sourceCurrencyId": {
+            "type": "string",
+            "description": "Source currency ID (what will be deducted from account)",
+            "format": "uuid"
+          },
+          "routingId": {
+            "type": "string",
+            "description": "Payout Provider Routing ID for routing the payout",
+            "format": "uuid"
+          },
+          "payoutType": {
+            "type": "string",
+            "description": "Type of payout",
+            "enum": [
+              "FIAT_FIAT",
+              "FIAT_CRYPTO",
+              "CRYPTO_FIAT",
+              "CRYPTO_CRYPTO"
+            ]
+          },
+          "recipientId": {
+            "type": "string",
+            "description": "Existing recipient ID from payout_fiat_recipients or payout_cryptocurrency_recipients table",
+            "format": "uuid"
+          },
+          "recipientName": {
+            "type": "string",
+            "description": "Recipient full name (required if recipientId not provided)"
+          },
+          "recipientIdNumber": {
+            "type": "string",
+            "description": "Recipient ID number (required if recipientId not provided)"
+          },
+          "recipientPlaceOfBirth": {
+            "type": "string",
+            "description": "Recipient place of birth (required if recipientId not provided)"
+          },
+          "recipientBirthDate": {
+            "type": "string",
+            "description": "Recipient birth date (required if recipientId not provided)"
+          },
+          "recipientAddress": {
+            "type": "string",
+            "description": "Recipient address (required if recipientId not provided)"
+          },
+          "recipientPhone": {
+            "type": "string",
+            "description": "Recipient phone number"
+          },
+          "recipientCountryId": {
+            "type": "string",
+            "description": "Country ID for bank transfers",
+            "format": "uuid"
+          },
+          "recipientBankId": {
+            "type": "string",
+            "description": "Bank ID for bank transfers",
+            "format": "uuid"
+          },
+          "recipientBankAccountNumber": {
+            "type": "string",
+            "description": "Bank account number for bank transfers"
+          },
+          "walletAddress": {
+            "type": "string",
+            "description": "Wallet address for cryptocurrency transfers"
+          },
+          "walletOwnerName": {
+            "type": "string",
+            "description": "Wallet owner name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description or purpose of the payout"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata for the payout"
+          },
+          "data": {
+            "type": "object",
+            "description": "Additional data for enhanced logging"
+          }
+        },
+        "required": [
+          "amount",
+          "destinationCurrencyId",
+          "sourceCurrencyId",
+          "routingId",
+          "payoutType"
+        ]
+      },
+      "PayoutBusinessResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Public payout identifier (CUID2)"
+          },
+          "number": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "REQUESTED",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED",
+              "CANCELLED"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "FIAT_FIAT",
+              "FIAT_CRYPTO",
+              "CRYPTO_FIAT",
+              "CRYPTO_CRYPTO"
+            ]
+          },
+          "amount": {
+            "type": "string"
+          },
+          "exchangeRate": {
+            "type": "string"
+          },
+          "feeAmount": {
+            "type": "string"
+          },
+          "receivedAmount": {
+            "type": "string"
+          },
+          "referenceText": {
+            "type": "string"
+          },
+          "referenceImage": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "sourceCurrency": {
+            "$ref": "#/components/schemas/BusinessCurrencyDto"
+          },
+          "destinationCurrency": {
+            "$ref": "#/components/schemas/BusinessCurrencyDto"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "status",
+          "type",
+          "amount",
+          "exchangeRate",
+          "feeAmount",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "BusinessCurrencyDto": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "currencyType": {
+            "type": "string",
+            "enum": [
+              "FIAT",
+              "CRYPTO"
+            ]
+          },
+          "decimals": {
+            "type": "number"
+          },
+          "paymentDecimals": {
+            "type": "number"
+          },
+          "contractAddress": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "network": {
+            "$ref": "#/components/schemas/BusinessNetworkDto"
+          }
+        },
+        "required": [
+          "symbol",
+          "name"
+        ]
+      },
+      "BusinessNetworkDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "networkName": {
+            "type": "string"
+          },
+          "blockchainNetworkType": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "blockExplorerUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "chainId",
+          "network",
+          "networkName"
+        ]
+      }
+    }
+  }
+}

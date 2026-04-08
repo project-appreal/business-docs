@@ -1,0 +1,179 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "List all supported crypto currencies/assets",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.appreal.com/api/business/v1",
+      "description": "Production"
+    },
+    {
+      "url": "https://dev.appreal.xyz/api/business/v1",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "X-API-Key": []
+    }
+  ],
+  "paths": {
+    "/currencies": {
+      "get": {
+        "operationId": "CurrencyBusinessController_getAll",
+        "summary": "List all supported crypto currencies/assets",
+        "parameters": [
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "description": "Filter by active status",
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "networkId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by network ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "symbol",
+            "required": false,
+            "in": "query",
+            "description": "Search by symbol",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Currencies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CurrencyBusinessResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key"
+          }
+        },
+        "tags": [
+          "Currencies"
+        ],
+        "security": [
+          {
+            "X-API-Key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "X-API-Key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API Key for business authentication",
+        "x-default": "YOUR_API_KEY_HERE"
+      }
+    },
+    "schemas": {
+      "CurrencyBusinessResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Currency alias (e.g., usdt_binance) — public identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Currency name"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Currency symbol (e.g., ETH, USDT)"
+          },
+          "currencyType": {
+            "type": "string",
+            "description": "Currency type",
+            "enum": [
+              "FIAT",
+              "CRYPTO"
+            ]
+          },
+          "decimals": {
+            "type": "number",
+            "description": "Token decimals"
+          },
+          "contractAddress": {
+            "type": "string",
+            "description": "Contract address (for tokens)"
+          },
+          "logo": {
+            "type": "string",
+            "description": "Currency logo URL"
+          },
+          "network": {
+            "description": "Network the currency is deployed on",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BusinessNetworkDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "symbol",
+          "currencyType",
+          "decimals"
+        ]
+      },
+      "BusinessNetworkDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "networkName": {
+            "type": "string"
+          },
+          "blockchainNetworkType": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "blockExplorerUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "chainId",
+          "network",
+          "networkName"
+        ]
+      }
+    }
+  }
+}
