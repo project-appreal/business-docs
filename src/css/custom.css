@@ -212,6 +212,13 @@
   min-width: 0;
 }
 
+/* Reduce Scalar's internal left gap */
+.api-page-content .section {
+  padding-left: 6px !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+}
+
 /* Hide Scalar's built-in sidebar on per-endpoint pages (we use our own) */
 .api-page-content .t-doc__sidebar {
   display: none;
