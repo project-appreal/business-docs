@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get balance history for a specific account balance",
+    "title": "Get Balance History",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/account-balances/{balanceId}/history": {
       "get": {
         "operationId": "AccountBalanceBusinessController_getBalanceHistory",
-        "summary": "Get balance history for a specific account balance",
+        "summary": "Get Balance History",
         "parameters": [
           {
             "name": "balanceId",
@@ -50,7 +50,7 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Number of items per page",
+            "description": "Number of items per page (1-1000, default: 10)",
             "schema": {
               "minimum": 1,
               "maximum": 1000,
@@ -62,7 +62,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search keyword",
+            "description": "Full-text search across relevant fields",
             "schema": {
               "type": "string"
             }
@@ -71,7 +71,7 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Field to sort by",
+            "description": "Field to sort results by (e.g., `createdAt`, `amount`)",
             "schema": {
               "example": "createdAt",
               "type": "string"
@@ -81,7 +81,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
-            "description": "Sort direction",
+            "description": "Sort order: `asc` (oldest first) or `desc` (newest first, default)",
             "schema": {
               "default": "desc",
               "enum": [
@@ -164,14 +164,12 @@
             "description": "Account balance not found"
           }
         },
-        "tags": [
-          "Balances"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns the transaction history for a specific account balance. Each entry represents a credit or debit event (invoice payment, payout, fee, or manual adjustment).\n\nSupports filtering by transaction type, status, date range, and currency.\n\n> **Tip:** Use `type=INVOICE` to see incoming payments and `type=PAYOUT` to see outgoing transfers."
       }
     }
   },

@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "List all supported blockchain networks",
+    "title": "List Networks",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/networks": {
       "get": {
         "operationId": "NetworkBusinessController_getAll",
-        "summary": "List all supported blockchain networks",
+        "summary": "List Networks",
         "parameters": [
           {
             "name": "isActive",
@@ -69,14 +69,12 @@
             "description": "Unauthorized - Invalid API key"
           }
         },
-        "tags": [
-          "Networks"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns all supported blockchain networks with their details, including chain ID, blockchain type, and active status.\n\nFilter by `blockchainType` to see only EVM-compatible chains, Solana, or Tron networks."
       }
     }
   },

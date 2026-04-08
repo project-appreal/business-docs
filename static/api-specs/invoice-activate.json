@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Activate invoice",
+    "title": "Activate Invoice",
     "version": ""
   },
   "servers": [
@@ -23,8 +23,8 @@
     "/invoices/{id}/activate": {
       "post": {
         "operationId": "InvoiceBusinessController_activate",
-        "summary": "Activate invoice",
-        "description": "Activate a PREPARED invoice by configuring payment method.\n\n**Required**: sourceCurrencyId\n**Optional**: expiredAt (custom expiration)\n\nExchange rate is fetched automatically. This endpoint assigns a wallet and transitions the invoice to ACTIVE status.",
+        "summary": "Activate Invoice",
+        "description": "Activates a `PREPARED` invoice by configuring its payment method. This assigns a blockchain wallet, fetches the current exchange rate, and transitions the invoice to `ACTIVE` status.\n\n**Required:** `sourceCurrencyId` — the cryptocurrency the customer will pay with.\n**Optional:** `expiredAt` — custom expiration timestamp.\n\n> **Note:** The exchange rate is locked at activation time. Once activated, the invoice begins accepting payments immediately.",
         "parameters": [
           {
             "name": "id",
@@ -67,9 +67,6 @@
             "description": "Invoice not found"
           }
         },
-        "tags": [
-          "Invoice"
-        ],
         "security": [
           {
             "X-API-Key": []

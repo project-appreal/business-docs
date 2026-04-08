@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Update invoice fields",
+    "title": "Update Invoice",
     "version": ""
   },
   "servers": [
@@ -23,8 +23,8 @@
     "/invoices/{id}": {
       "patch": {
         "operationId": "InvoiceBusinessController_update",
-        "summary": "Update invoice fields",
-        "description": "Update invoice fields (customerEmail, customerName, reference, redirectUrl, webhookUrl, expiredAt).\n\nUse `POST :id/activate` for payment configuration and activation.\nUse `POST :id/cancel` for cancellation.\n\n**Allowed statuses**: PREPARED, ACTIVE",
+        "summary": "Update Invoice",
+        "description": "Updates mutable fields on an existing invoice. Only invoices in `PREPARED` or `ACTIVE` status can be updated.\n\nUpdatable fields: `customerEmail`, `customerName`, `reference`, `redirectUrl`, `webhookUrl`, `expiredAt`.\n\n> **Important:** Use [Activate Invoice](/api/invoice-activate) for payment configuration and [Cancel Invoice](/api/invoice-cancel) for cancellation — this endpoint only updates metadata fields.",
         "parameters": [
           {
             "name": "id",
@@ -67,9 +67,6 @@
             "description": "Invoice not found"
           }
         },
-        "tags": [
-          "Invoice"
-        ],
         "security": [
           {
             "X-API-Key": []

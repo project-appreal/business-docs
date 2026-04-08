@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "List all supported crypto currencies/assets",
+    "title": "List Currencies",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/currencies": {
       "get": {
         "operationId": "CurrencyBusinessController_getAll",
-        "summary": "List all supported crypto currencies/assets",
+        "summary": "List Currencies",
         "parameters": [
           {
             "name": "isActive",
@@ -72,14 +72,12 @@
             "description": "Unauthorized - Invalid API key"
           }
         },
-        "tags": [
-          "Currencies"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns all supported cryptocurrencies and their details, including symbol, name, network, and contract address.\n\nUse the `isActive` filter to exclude deprecated or disabled currencies. Filter by `networkId` to see currencies available on a specific blockchain.\n\n> **Note:** The `id` returned here is the `sourceCurrencyId` required when activating an invoice."
       }
     }
   },

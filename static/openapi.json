@@ -4,7 +4,7 @@
     "/invoices": {
       "post": {
         "operationId": "InvoiceBusinessController_create",
-        "summary": "Create a new invoice",
+        "summary": "Create Invoice",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -41,17 +41,18 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Creates a new payment invoice in PREPARED status. The invoice is not yet active \u2014 use the [Activate Invoice](/api/invoice-activate) endpoint to assign a wallet and begin accepting payments.\n\n**Typical flow**: Create Invoice \u2192 Activate Invoice \u2192 Monitor status via webhooks.\n\n> **Note:** Set a `webhookUrl` to receive real-time status updates. Do not rely solely on polling \u2014 use webhooks as the primary notification mechanism."
       },
       "get": {
         "operationId": "InvoiceBusinessController_list",
-        "summary": "List invoices for the authenticated account",
+        "summary": "List Invoices",
         "parameters": [
           {
             "name": "cursor",
             "required": false,
             "in": "query",
-            "description": "Cursor from previous response (ID of the last item)",
+            "description": "Pagination cursor. Pass the `id` of the last item from the previous response to fetch the next page.",
             "schema": {
               "example": "550e8400-e29b-41d4-a716-446655440000",
               "type": "string"
@@ -61,7 +62,7 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Number of items per page",
+            "description": "Number of items per page (1-100, default: 20)",
             "schema": {
               "minimum": 1,
               "maximum": 100,
@@ -73,7 +74,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search keyword",
+            "description": "Full-text search across relevant fields",
             "schema": {
               "type": "string"
             }
@@ -82,7 +83,7 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Field to sort by",
+            "description": "Field to sort results by (e.g., `createdAt`, `amount`)",
             "schema": {
               "example": "createdAt",
               "type": "string"
@@ -92,7 +93,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
-            "description": "Sort direction",
+            "description": "Sort order: `asc` (oldest first) or `desc` (newest first, default)",
             "schema": {
               "default": "desc",
               "enum": [
@@ -197,13 +198,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a paginated list of invoices for the authenticated business account. Supports cursor-based pagination, filtering by status, and full-text search.\n\n**Pagination**: Uses cursor-based pagination. Pass the `id` of the last item from the previous response as the `cursor` parameter to fetch the next page.\n\n> **Tip:** Use the `statuses` filter to monitor invoices requiring attention (e.g., `ACTIVE`, `CONFIRMING`)."
       }
     },
     "/invoices/{id}": {
       "get": {
         "operationId": "InvoiceBusinessController_findOne",
-        "summary": "Get invoice by public ID",
+        "summary": "Get Invoice",
         "parameters": [
           {
             "name": "id",
@@ -240,12 +242,13 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a single invoice by its public ID. Returns the full invoice object including payment details, exchange rate, and current status.\n\n> **Note:** Use this endpoint to verify invoice state before taking action. Always confirm the invoice status server-side rather than relying on client-side state."
       },
       "patch": {
         "operationId": "InvoiceBusinessController_update",
-        "summary": "Update invoice fields",
-        "description": "Update invoice fields (customerEmail, customerName, reference, redirectUrl, webhookUrl, expiredAt).\n\nUse `POST :id/activate` for payment configuration and activation.\nUse `POST :id/cancel` for cancellation.\n\n**Allowed statuses**: PREPARED, ACTIVE",
+        "summary": "Update Invoice",
+        "description": "Updates mutable fields on an existing invoice. Only invoices in `PREPARED` or `ACTIVE` status can be updated.\n\nUpdatable fields: `customerEmail`, `customerName`, `reference`, `redirectUrl`, `webhookUrl`, `expiredAt`.\n\n> **Important:** Use [Activate Invoice](/api/invoice-activate) for payment configuration and [Cancel Invoice](/api/invoice-cancel) for cancellation \u2014 this endpoint only updates metadata fields.",
         "parameters": [
           {
             "name": "id",
@@ -301,8 +304,8 @@
     "/invoices/{id}/activate": {
       "post": {
         "operationId": "InvoiceBusinessController_activate",
-        "summary": "Activate invoice",
-        "description": "Activate a PREPARED invoice by configuring payment method.\n\n**Required**: sourceCurrencyId\n**Optional**: expiredAt (custom expiration)\n\nExchange rate is fetched automatically. This endpoint assigns a wallet and transitions the invoice to ACTIVE status.",
+        "summary": "Activate Invoice",
+        "description": "Activates a `PREPARED` invoice by configuring its payment method. This assigns a blockchain wallet, fetches the current exchange rate, and transitions the invoice to `ACTIVE` status.\n\n**Required:** `sourceCurrencyId` \u2014 the cryptocurrency the customer will pay with.\n**Optional:** `expiredAt` \u2014 custom expiration timestamp.\n\n> **Note:** The exchange rate is locked at activation time. Once activated, the invoice begins accepting payments immediately.",
         "parameters": [
           {
             "name": "id",
@@ -358,7 +361,7 @@
     "/invoices/{id}/cancel": {
       "post": {
         "operationId": "InvoiceBusinessController_cancel",
-        "summary": "Cancel invoice",
+        "summary": "Cancel Invoice",
         "parameters": [
           {
             "name": "id",
@@ -408,13 +411,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Cancels an invoice. Only invoices in `PREPARED` or `ACTIVE` status can be cancelled. Cancelled invoices cannot be reactivated.\n\n> **Warning:** Cancelling an `ACTIVE` invoice will reject any incoming payments. Ensure no payment is in transit before cancelling."
       }
     },
     "/account-balances": {
       "get": {
         "operationId": "AccountBalanceBusinessController_getBalances",
-        "summary": "Get account balances for the authenticated business",
+        "summary": "List Account Balances",
         "parameters": [
           {
             "name": "page",
@@ -432,7 +436,7 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Number of items per page",
+            "description": "Number of items per page (1-1000, default: 10)",
             "schema": {
               "minimum": 1,
               "maximum": 1000,
@@ -444,7 +448,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search keyword",
+            "description": "Full-text search across relevant fields",
             "schema": {
               "type": "string"
             }
@@ -453,7 +457,7 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Field to sort by",
+            "description": "Field to sort results by (e.g., `createdAt`, `amount`)",
             "schema": {
               "example": "createdAt",
               "type": "string"
@@ -463,7 +467,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
-            "description": "Sort direction",
+            "description": "Sort order: `asc` (oldest first) or `desc` (newest first, default)",
             "schema": {
               "default": "desc",
               "enum": [
@@ -540,13 +544,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns all account balances for the authenticated business. Each balance represents a currency holding with available and pending amounts.\n\nSupports filtering by currency type (`FIAT`, `CRYPTO`), currency alias, and parent-only currencies.\n\n> **Tip:** Use `isParentOnly=true` (default) to see aggregated balances. Set to `false` to see balances broken down by network."
       }
     },
     "/account-balances/{id}": {
       "get": {
         "operationId": "AccountBalanceBusinessController_getBalanceById",
-        "summary": "Get a specific account balance by public ID for the authenticated business",
+        "summary": "Get Account Balance",
         "parameters": [
           {
             "name": "id",
@@ -585,13 +590,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a specific account balance by its public ID. Returns the current balance amount, currency details, and pending transactions."
       }
     },
     "/account-balances/{balanceId}/history": {
       "get": {
         "operationId": "AccountBalanceBusinessController_getBalanceHistory",
-        "summary": "Get balance history for a specific account balance",
+        "summary": "Get Balance History",
         "parameters": [
           {
             "name": "balanceId",
@@ -618,7 +624,7 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Number of items per page",
+            "description": "Number of items per page (1-1000, default: 10)",
             "schema": {
               "minimum": 1,
               "maximum": 1000,
@@ -630,7 +636,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search keyword",
+            "description": "Full-text search across relevant fields",
             "schema": {
               "type": "string"
             }
@@ -639,7 +645,7 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Field to sort by",
+            "description": "Field to sort results by (e.g., `createdAt`, `amount`)",
             "schema": {
               "example": "createdAt",
               "type": "string"
@@ -649,7 +655,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
-            "description": "Sort direction",
+            "description": "Sort order: `asc` (oldest first) or `desc` (newest first, default)",
             "schema": {
               "default": "desc",
               "enum": [
@@ -739,13 +745,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns the transaction history for a specific account balance. Each entry represents a credit or debit event (invoice payment, payout, fee, or manual adjustment).\n\nSupports filtering by transaction type, status, date range, and currency.\n\n> **Tip:** Use `type=INVOICE` to see incoming payments and `type=PAYOUT` to see outgoing transfers."
       }
     },
     "/account-balances/{balanceId}/history/export": {
       "get": {
         "operationId": "AccountBalanceBusinessController_exportHistoryByBalanceId",
-        "summary": "Export balance history as CSV for a specific account balance",
+        "summary": "Export Balance History (CSV)",
         "parameters": [
           {
             "name": "balanceId",
@@ -772,7 +779,7 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Number of items per page",
+            "description": "Number of items per page (1-1000, default: 10)",
             "schema": {
               "minimum": 1,
               "maximum": 1000,
@@ -784,7 +791,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search keyword",
+            "description": "Full-text search across relevant fields",
             "schema": {
               "type": "string"
             }
@@ -793,7 +800,7 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Field to sort by",
+            "description": "Field to sort results by (e.g., `createdAt`, `amount`)",
             "schema": {
               "example": "createdAt",
               "type": "string"
@@ -803,7 +810,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
-            "description": "Sort direction",
+            "description": "Sort order: `asc` (oldest first) or `desc` (newest first, default)",
             "schema": {
               "default": "desc",
               "enum": [
@@ -893,14 +900,15 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Downloads the transaction history for a specific account balance as a CSV file. Supports the same filters as the [Get Balance History](/api/account-balance-get-balance-history) endpoint.\n\n> **Note:** The response is a CSV file download, not JSON. Use this for accounting, reconciliation, or reporting purposes."
       }
     },
     "/exchange-rates": {
       "get": {
         "operationId": "ExchangeRateBusinessController_getAllRates",
-        "summary": "Get all crypto assets with exchange rates",
-        "description": "Returns all supported crypto assets with their exchange rates to fiat currencies and supported networks.",
+        "summary": "List Exchange Rates",
+        "description": "Returns all supported crypto assets with their current exchange rates to fiat currencies and available blockchain networks.\n\nOptionally filter by specific fiat currencies using the `currencies` parameter.\n\n> **Note:** Exchange rates are indicative and may vary at the time of invoice activation. The final rate is locked when an invoice is activated.",
         "parameters": [
           {
             "name": "currencies",
@@ -943,8 +951,8 @@
     "/exchange-rates/{asset}": {
       "get": {
         "operationId": "ExchangeRateBusinessController_getCryptoRates",
-        "summary": "Get exchange rates for a specific crypto asset",
-        "description": "Returns exchange rates for a specific crypto asset (e.g., BTC, ETH, USDT) to all fiat currencies, including supported networks.",
+        "summary": "Get Exchange Rates by Asset",
+        "description": "Returns exchange rates for a specific crypto asset (e.g., BTC, ETH, USDT) to all supported fiat currencies, including available networks.\n\n> **Tip:** Use this endpoint to display estimated prices to customers before creating an invoice.",
         "parameters": [
           {
             "name": "asset",
@@ -1000,7 +1008,7 @@
     "/currencies": {
       "get": {
         "operationId": "CurrencyBusinessController_getAll",
-        "summary": "List all supported crypto currencies/assets",
+        "summary": "List Currencies",
         "parameters": [
           {
             "name": "isActive",
@@ -1056,13 +1064,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns all supported cryptocurrencies and their details, including symbol, name, network, and contract address.\n\nUse the `isActive` filter to exclude deprecated or disabled currencies. Filter by `networkId` to see currencies available on a specific blockchain.\n\n> **Note:** The `id` returned here is the `sourceCurrencyId` required when activating an invoice."
       }
     },
     "/currencies/{alias}": {
       "get": {
         "operationId": "CurrencyBusinessController_getByAlias",
-        "summary": "Get currency by alias",
+        "summary": "Get Currency by Alias",
         "parameters": [
           {
             "name": "alias",
@@ -1102,13 +1111,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a specific currency by its alias (e.g., `usdt_binance`, `btc_bitcoin`). The alias uniquely identifies a currency on a specific network.\n\n> **Tip:** Use this endpoint to look up currency details when you already know the alias from a previous API response."
       }
     },
     "/networks": {
       "get": {
         "operationId": "NetworkBusinessController_getAll",
-        "summary": "List all supported blockchain networks",
+        "summary": "List Networks",
         "parameters": [
           {
             "name": "isActive",
@@ -1161,13 +1171,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns all supported blockchain networks with their details, including chain ID, blockchain type, and active status.\n\nFilter by `blockchainType` to see only EVM-compatible chains, Solana, or Tron networks."
       }
     },
     "/networks/{network}": {
       "get": {
         "operationId": "NetworkBusinessController_getByNetwork",
-        "summary": "Get network by slug",
+        "summary": "Get Network by Slug",
         "parameters": [
           {
             "name": "network",
@@ -1204,19 +1215,20 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a specific blockchain network by its slug (e.g., `arbitrum-one`, `ethereum`, `tron`)."
       }
     },
     "/payout": {
       "get": {
         "operationId": "PayoutBusinessController_getBusinessPayouts",
-        "summary": "Get payouts for business API key",
+        "summary": "List Payouts",
         "parameters": [
           {
             "name": "cursor",
             "required": false,
             "in": "query",
-            "description": "Cursor from previous response (ID of the last item)",
+            "description": "Pagination cursor. Pass the `id` of the last item from the previous response to fetch the next page.",
             "schema": {
               "example": "550e8400-e29b-41d4-a716-446655440000",
               "type": "string"
@@ -1226,7 +1238,7 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Number of items per page",
+            "description": "Number of items per page (1-100, default: 20)",
             "schema": {
               "minimum": 1,
               "maximum": 100,
@@ -1238,7 +1250,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search keyword",
+            "description": "Full-text search across relevant fields",
             "schema": {
               "type": "string"
             }
@@ -1247,7 +1259,7 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Field to sort by",
+            "description": "Field to sort results by (e.g., `createdAt`, `amount`)",
             "schema": {
               "example": "createdAt",
               "type": "string"
@@ -1257,7 +1269,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
-            "description": "Sort direction",
+            "description": "Sort order: `asc` (oldest first) or `desc` (newest first, default)",
             "schema": {
               "default": "desc",
               "enum": [
@@ -1335,11 +1347,12 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a paginated list of payouts for the authenticated business. Supports cursor-based pagination, filtering by status, payout type, and processing type.\n\n**Payout types:** `FIAT_FIAT`, `FIAT_CRYPTO`, `CRYPTO_FIAT`, `CRYPTO_CRYPTO`.\n**Processing types:** `INTERNAL` (on-platform), `EXTERNAL` (blockchain/bank transfer).\n\n> **Tip:** Filter by `processingType=EXTERNAL` to see payouts processed through external providers."
       },
       "post": {
         "operationId": "PayoutBusinessController_createBusinessPayout",
-        "summary": "Create a new payout for business API key",
+        "summary": "Create Payout",
         "parameters": [
           {
             "name": "x-idempotency-key",
@@ -1400,13 +1413,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Creates a new payout to transfer funds from your account balance to an external recipient.\n\n**Required header:** `X-Idempotency-Key` \u2014 a unique string (e.g., UUID) to prevent duplicate payouts if the request is retried.\n\n> **Warning:** Payouts are irreversible once processed. Always use the [Inquire Account](/api/payout-inquire-account) and [Get Payout Info](/api/payout-get-payout-info) endpoints to validate recipient details and preview fees before creating a payout.\n\n> **Important:** The idempotency key ensures that retrying the same request (e.g., due to network timeout) will not create a duplicate payout."
       }
     },
     "/payout/inquire-account": {
       "post": {
         "operationId": "PayoutBusinessController_inquireBusinessAccount",
-        "summary": "Inquire account details for business API key",
+        "summary": "Inquire Account",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1439,13 +1453,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Validates and retrieves account details for a payout recipient. Use this before creating a payout to verify the recipient's account information and ensure the transfer will succeed.\n\n> **Recommended flow:** Inquire Account \u2192 Get Payout Info \u2192 Create Payout."
       }
     },
     "/payout/payout-info": {
       "post": {
         "operationId": "PayoutBusinessController_getBusinessPayoutInfo",
-        "summary": "Get payout information including fees and validation requirements for business API key",
+        "summary": "Get Payout Info",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1478,13 +1493,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns fee breakdown, validation requirements, and estimated delivery time for a payout. Use this to preview the total cost before committing to a payout.\n\n> **Tip:** Show the fee breakdown to users before they confirm the payout to avoid surprises."
       }
     },
     "/payout/status/{id}": {
       "get": {
         "operationId": "PayoutBusinessController_getBusinessPayoutStatus",
-        "summary": "Get payout status for business API key",
+        "summary": "Get Payout Status",
         "parameters": [
           {
             "name": "id",
@@ -1521,13 +1537,14 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns the current status of a specific payout. Use this for polling-based status checks.\n\n**Payout statuses:** `REQUESTED` \u2192 `PENDING` \u2192 `PROCESSING` \u2192 `CONFIRMING` \u2192 `COMPLETED` (or `FAILED`/`EXPIRED`).\n\n> **Tip:** Prefer webhooks over polling for real-time status updates."
       }
     },
     "/payout/{id}": {
       "get": {
         "operationId": "PayoutBusinessController_getBusinessPayoutDetails",
-        "summary": "Get specific payout details for business API key",
+        "summary": "Get Payout Details",
         "parameters": [
           {
             "name": "id",
@@ -1567,7 +1584,8 @@
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves the full details of a specific payout, including recipient information, fees, exchange rate, and transaction hash (if applicable)."
       }
     }
   },
@@ -2274,7 +2292,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Currency alias (e.g., usdt_binance) — public identifier"
+            "description": "Currency alias (e.g., usdt_binance) \u2014 public identifier"
           },
           "name": {
             "type": "string",
@@ -2326,7 +2344,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Network slug (e.g., arbitrum-one) — public identifier"
+            "description": "Network slug (e.g., arbitrum-one) \u2014 public identifier"
           },
           "chainId": {
             "type": "string",

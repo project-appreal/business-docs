@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get payout status for business API key",
+    "title": "Get Payout Status",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/payout/status/{id}": {
       "get": {
         "operationId": "PayoutBusinessController_getBusinessPayoutStatus",
-        "summary": "Get payout status for business API key",
+        "summary": "Get Payout Status",
         "parameters": [
           {
             "name": "id",
@@ -53,14 +53,12 @@
             "description": "Payout not found"
           }
         },
-        "tags": [
-          "Payout"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns the current status of a specific payout. Use this for polling-based status checks.\n\n**Payout statuses:** `REQUESTED` → `PENDING` → `PROCESSING` → `CONFIRMING` → `COMPLETED` (or `FAILED`/`EXPIRED`).\n\n> **Tip:** Prefer webhooks over polling for real-time status updates."
       }
     }
   },

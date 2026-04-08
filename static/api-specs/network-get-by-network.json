@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get network by slug",
+    "title": "Get Network by Slug",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/networks/{network}": {
       "get": {
         "operationId": "NetworkBusinessController_getByNetwork",
-        "summary": "Get network by slug",
+        "summary": "Get Network by Slug",
         "parameters": [
           {
             "name": "network",
@@ -53,14 +53,12 @@
             "description": "Network not found"
           }
         },
-        "tags": [
-          "Networks"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a specific blockchain network by its slug (e.g., `arbitrum-one`, `ethereum`, `tron`)."
       }
     }
   },

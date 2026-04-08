@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Inquire account details for business API key",
+    "title": "Inquire Account",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/payout/inquire-account": {
       "post": {
         "operationId": "PayoutBusinessController_inquireBusinessAccount",
-        "summary": "Inquire account details for business API key",
+        "summary": "Inquire Account",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -49,14 +49,12 @@
             "description": "Forbidden - Business API access required"
           }
         },
-        "tags": [
-          "Payout"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Validates and retrieves account details for a payout recipient. Use this before creating a payout to verify the recipient's account information and ensure the transfer will succeed.\n\n> **Recommended flow:** Inquire Account → Get Payout Info → Create Payout."
       }
     }
   },

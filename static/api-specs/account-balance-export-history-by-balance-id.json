@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Export balance history as CSV for a specific account balance",
+    "title": "Export Balance History (CSV)",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/account-balances/{balanceId}/history/export": {
       "get": {
         "operationId": "AccountBalanceBusinessController_exportHistoryByBalanceId",
-        "summary": "Export balance history as CSV for a specific account balance",
+        "summary": "Export Balance History (CSV)",
         "parameters": [
           {
             "name": "balanceId",
@@ -50,7 +50,7 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Number of items per page",
+            "description": "Number of items per page (1-1000, default: 10)",
             "schema": {
               "minimum": 1,
               "maximum": 1000,
@@ -62,7 +62,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search keyword",
+            "description": "Full-text search across relevant fields",
             "schema": {
               "type": "string"
             }
@@ -71,7 +71,7 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Field to sort by",
+            "description": "Field to sort results by (e.g., `createdAt`, `amount`)",
             "schema": {
               "example": "createdAt",
               "type": "string"
@@ -81,7 +81,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
-            "description": "Sort direction",
+            "description": "Sort order: `asc` (oldest first) or `desc` (newest first, default)",
             "schema": {
               "default": "desc",
               "enum": [
@@ -164,14 +164,12 @@
             "description": "Account balance not found"
           }
         },
-        "tags": [
-          "Balances"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Downloads the transaction history for a specific account balance as a CSV file. Supports the same filters as the [Get Balance History](/api/account-balance-get-balance-history) endpoint.\n\n> **Note:** The response is a CSV file download, not JSON. Use this for accounting, reconciliation, or reporting purposes."
       }
     }
   },

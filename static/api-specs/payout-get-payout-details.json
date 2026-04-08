@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get specific payout details for business API key",
+    "title": "Get Payout Details",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/payout/{id}": {
       "get": {
         "operationId": "PayoutBusinessController_getBusinessPayoutDetails",
-        "summary": "Get specific payout details for business API key",
+        "summary": "Get Payout Details",
         "parameters": [
           {
             "name": "id",
@@ -56,14 +56,12 @@
             "description": "Payout not found"
           }
         },
-        "tags": [
-          "Payout"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves the full details of a specific payout, including recipient information, fees, exchange rate, and transaction hash (if applicable)."
       }
     }
   },

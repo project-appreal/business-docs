@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get invoice by public ID",
+    "title": "Get Invoice",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/invoices/{id}": {
       "get": {
         "operationId": "InvoiceBusinessController_findOne",
-        "summary": "Get invoice by public ID",
+        "summary": "Get Invoice",
         "parameters": [
           {
             "name": "id",
@@ -53,14 +53,12 @@
             "description": "Invoice not found"
           }
         },
-        "tags": [
-          "Invoice"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a single invoice by its public ID. Returns the full invoice object including payment details, exchange rate, and current status.\n\n> **Note:** Use this endpoint to verify invoice state before taking action. Always confirm the invoice status server-side rather than relying on client-side state."
       }
     }
   },

@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get currency by alias",
+    "title": "Get Currency by Alias",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/currencies/{alias}": {
       "get": {
         "operationId": "CurrencyBusinessController_getByAlias",
-        "summary": "Get currency by alias",
+        "summary": "Get Currency by Alias",
         "parameters": [
           {
             "name": "alias",
@@ -56,14 +56,12 @@
             "description": "Currency not found"
           }
         },
-        "tags": [
-          "Currencies"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a specific currency by its alias (e.g., `usdt_binance`, `btc_bitcoin`). The alias uniquely identifies a currency on a specific network.\n\n> **Tip:** Use this endpoint to look up currency details when you already know the alias from a previous API response."
       }
     }
   },

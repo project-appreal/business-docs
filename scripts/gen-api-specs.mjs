@@ -69,7 +69,10 @@ for (const [path, methods] of Object.entries(spec.paths)) {
     const tag = (operation.tags || ['Other'])[0];
     const summary = operation.summary || opId;
 
-    // Build mini spec with just this endpoint (no intro section)
+    // Build mini spec with just this endpoint (no intro section, no tag grouping)
+    const strippedOp = { ...operation };
+    delete strippedOp.tags;
+
     const miniSpec = {
       openapi: spec.openapi,
       info: { title: summary, version: '' },
@@ -77,7 +80,7 @@ for (const [path, methods] of Object.entries(spec.paths)) {
       security: spec.security,
       paths: {
         [path]: {
-          [method]: operation,
+          [method]: strippedOp,
         },
       },
       components: {

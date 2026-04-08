@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get account balances for the authenticated business",
+    "title": "List Account Balances",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/account-balances": {
       "get": {
         "operationId": "AccountBalanceBusinessController_getBalances",
-        "summary": "Get account balances for the authenticated business",
+        "summary": "List Account Balances",
         "parameters": [
           {
             "name": "page",
@@ -41,7 +41,7 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Number of items per page",
+            "description": "Number of items per page (1-1000, default: 10)",
             "schema": {
               "minimum": 1,
               "maximum": 1000,
@@ -53,7 +53,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search keyword",
+            "description": "Full-text search across relevant fields",
             "schema": {
               "type": "string"
             }
@@ -62,7 +62,7 @@
             "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Field to sort by",
+            "description": "Field to sort results by (e.g., `createdAt`, `amount`)",
             "schema": {
               "example": "createdAt",
               "type": "string"
@@ -72,7 +72,7 @@
             "name": "sortDirection",
             "required": false,
             "in": "query",
-            "description": "Sort direction",
+            "description": "Sort order: `asc` (oldest first) or `desc` (newest first, default)",
             "schema": {
               "default": "desc",
               "enum": [
@@ -142,14 +142,12 @@
             "description": "Unauthorized - Invalid API key"
           }
         },
-        "tags": [
-          "Balances"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns all account balances for the authenticated business. Each balance represents a currency holding with available and pending amounts.\n\nSupports filtering by currency type (`FIAT`, `CRYPTO`), currency alias, and parent-only currencies.\n\n> **Tip:** Use `isParentOnly=true` (default) to see aggregated balances. Set to `false` to see balances broken down by network."
       }
     }
   },

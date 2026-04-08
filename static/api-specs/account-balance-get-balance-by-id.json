@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get a specific account balance by public ID for the authenticated business",
+    "title": "Get Account Balance",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/account-balances/{id}": {
       "get": {
         "operationId": "AccountBalanceBusinessController_getBalanceById",
-        "summary": "Get a specific account balance by public ID for the authenticated business",
+        "summary": "Get Account Balance",
         "parameters": [
           {
             "name": "id",
@@ -55,14 +55,12 @@
             "description": "Account balance not found"
           }
         },
-        "tags": [
-          "Balances"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Retrieves a specific account balance by its public ID. Returns the current balance amount, currency details, and pending transactions."
       }
     }
   },

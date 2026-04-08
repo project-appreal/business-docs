@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get all crypto assets with exchange rates",
+    "title": "List Exchange Rates",
     "version": ""
   },
   "servers": [
@@ -23,8 +23,8 @@
     "/exchange-rates": {
       "get": {
         "operationId": "ExchangeRateBusinessController_getAllRates",
-        "summary": "Get all crypto assets with exchange rates",
-        "description": "Returns all supported crypto assets with their exchange rates to fiat currencies and supported networks.",
+        "summary": "List Exchange Rates",
+        "description": "Returns all supported crypto assets with their current exchange rates to fiat currencies and available blockchain networks.\n\nOptionally filter by specific fiat currencies using the `currencies` parameter.\n\n> **Note:** Exchange rates are indicative and may vary at the time of invoice activation. The final rate is locked when an invoice is activated.",
         "parameters": [
           {
             "name": "currencies",
@@ -54,9 +54,6 @@
             "description": "Unauthorized - Missing or invalid API key"
           }
         },
-        "tags": [
-          "Exchange Rates"
-        ],
         "security": [
           {
             "X-API-Key": []

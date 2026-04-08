@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Create a new payout for business API key",
+    "title": "Create Payout",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/payout": {
       "post": {
         "operationId": "PayoutBusinessController_createBusinessPayout",
-        "summary": "Create a new payout for business API key",
+        "summary": "Create Payout",
         "parameters": [
           {
             "name": "x-idempotency-key",
@@ -77,14 +77,12 @@
             "description": "Conflict - Payout creation already in progress for this idempotency key"
           }
         },
-        "tags": [
-          "Payout"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Creates a new payout to transfer funds from your account balance to an external recipient.\n\n**Required header:** `X-Idempotency-Key` — a unique string (e.g., UUID) to prevent duplicate payouts if the request is retried.\n\n> **Warning:** Payouts are irreversible once processed. Always use the [Inquire Account](/api/payout-inquire-account) and [Get Payout Info](/api/payout-get-payout-info) endpoints to validate recipient details and preview fees before creating a payout.\n\n> **Important:** The idempotency key ensures that retrying the same request (e.g., due to network timeout) will not create a duplicate payout."
       }
     }
   },

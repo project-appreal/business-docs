@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Cancel invoice",
+    "title": "Cancel Invoice",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/invoices/{id}/cancel": {
       "post": {
         "operationId": "InvoiceBusinessController_cancel",
-        "summary": "Cancel invoice",
+        "summary": "Cancel Invoice",
         "parameters": [
           {
             "name": "id",
@@ -66,14 +66,12 @@
             "description": "Invoice not found"
           }
         },
-        "tags": [
-          "Invoice"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Cancels an invoice. Only invoices in `PREPARED` or `ACTIVE` status can be cancelled. Cancelled invoices cannot be reactivated.\n\n> **Warning:** Cancelling an `ACTIVE` invoice will reject any incoming payments. Ensure no payment is in transit before cancelling."
       }
     }
   },

@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get payout information including fees and validation requirements for business API key",
+    "title": "Get Payout Info",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/payout/payout-info": {
       "post": {
         "operationId": "PayoutBusinessController_getBusinessPayoutInfo",
-        "summary": "Get payout information including fees and validation requirements for business API key",
+        "summary": "Get Payout Info",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -49,14 +49,12 @@
             "description": "Forbidden - Business API access required"
           }
         },
-        "tags": [
-          "Payout"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Returns fee breakdown, validation requirements, and estimated delivery time for a payout. Use this to preview the total cost before committing to a payout.\n\n> **Tip:** Show the fee breakdown to users before they confirm the payout to avoid surprises."
       }
     }
   },

@@ -2,7 +2,7 @@
   {
     "slug": "invoice-create",
     "tag": "Invoice",
-    "summary": "Create a new invoice",
+    "summary": "Create Invoice",
     "method": "POST",
     "path": "/invoices",
     "filename": "invoice-create.json"
@@ -10,7 +10,7 @@
   {
     "slug": "invoice-list",
     "tag": "Invoice",
-    "summary": "List invoices for the authenticated account",
+    "summary": "List Invoices",
     "method": "GET",
     "path": "/invoices",
     "filename": "invoice-list.json"
@@ -18,7 +18,7 @@
   {
     "slug": "invoice-find-one",
     "tag": "Invoice",
-    "summary": "Get invoice by public ID",
+    "summary": "Get Invoice",
     "method": "GET",
     "path": "/invoices/{id}",
     "filename": "invoice-find-one.json"
@@ -26,7 +26,7 @@
   {
     "slug": "invoice-update",
     "tag": "Invoice",
-    "summary": "Update invoice fields",
+    "summary": "Update Invoice",
     "method": "PATCH",
     "path": "/invoices/{id}",
     "filename": "invoice-update.json"
@@ -34,7 +34,7 @@
   {
     "slug": "invoice-activate",
     "tag": "Invoice",
-    "summary": "Activate invoice",
+    "summary": "Activate Invoice",
     "method": "POST",
     "path": "/invoices/{id}/activate",
     "filename": "invoice-activate.json"
@@ -42,7 +42,7 @@
   {
     "slug": "invoice-cancel",
     "tag": "Invoice",
-    "summary": "Cancel invoice",
+    "summary": "Cancel Invoice",
     "method": "POST",
     "path": "/invoices/{id}/cancel",
     "filename": "invoice-cancel.json"
@@ -50,7 +50,7 @@
   {
     "slug": "account-balance-get-balances",
     "tag": "Balances",
-    "summary": "Get account balances for the authenticated business",
+    "summary": "List Account Balances",
     "method": "GET",
     "path": "/account-balances",
     "filename": "account-balance-get-balances.json"
@@ -58,7 +58,7 @@
   {
     "slug": "account-balance-get-balance-by-id",
     "tag": "Balances",
-    "summary": "Get a specific account balance by public ID for the authenticated business",
+    "summary": "Get Account Balance",
     "method": "GET",
     "path": "/account-balances/{id}",
     "filename": "account-balance-get-balance-by-id.json"
@@ -66,7 +66,7 @@
   {
     "slug": "account-balance-get-balance-history",
     "tag": "Balances",
-    "summary": "Get balance history for a specific account balance",
+    "summary": "Get Balance History",
     "method": "GET",
     "path": "/account-balances/{balanceId}/history",
     "filename": "account-balance-get-balance-history.json"
@@ -74,7 +74,7 @@
   {
     "slug": "account-balance-export-history-by-balance-id",
     "tag": "Balances",
-    "summary": "Export balance history as CSV for a specific account balance",
+    "summary": "Export Balance History (CSV)",
     "method": "GET",
     "path": "/account-balances/{balanceId}/history/export",
     "filename": "account-balance-export-history-by-balance-id.json"
@@ -82,7 +82,7 @@
   {
     "slug": "exchange-rate-get-all-rates",
     "tag": "Exchange Rates",
-    "summary": "Get all crypto assets with exchange rates",
+    "summary": "List Exchange Rates",
     "method": "GET",
     "path": "/exchange-rates",
     "filename": "exchange-rate-get-all-rates.json"
@@ -90,7 +90,7 @@
   {
     "slug": "exchange-rate-get-crypto-rates",
     "tag": "Exchange Rates",
-    "summary": "Get exchange rates for a specific crypto asset",
+    "summary": "Get Exchange Rates by Asset",
     "method": "GET",
     "path": "/exchange-rates/{asset}",
     "filename": "exchange-rate-get-crypto-rates.json"
@@ -98,7 +98,7 @@
   {
     "slug": "currency-get-all",
     "tag": "Currencies",
-    "summary": "List all supported crypto currencies/assets",
+    "summary": "List Currencies",
     "method": "GET",
     "path": "/currencies",
     "filename": "currency-get-all.json"
@@ -106,7 +106,7 @@
   {
     "slug": "currency-get-by-alias",
     "tag": "Currencies",
-    "summary": "Get currency by alias",
+    "summary": "Get Currency by Alias",
     "method": "GET",
     "path": "/currencies/{alias}",
     "filename": "currency-get-by-alias.json"
@@ -114,7 +114,7 @@
   {
     "slug": "network-get-all",
     "tag": "Networks",
-    "summary": "List all supported blockchain networks",
+    "summary": "List Networks",
     "method": "GET",
     "path": "/networks",
     "filename": "network-get-all.json"
@@ -122,7 +122,7 @@
   {
     "slug": "network-get-by-network",
     "tag": "Networks",
-    "summary": "Get network by slug",
+    "summary": "Get Network by Slug",
     "method": "GET",
     "path": "/networks/{network}",
     "filename": "network-get-by-network.json"
@@ -130,7 +130,7 @@
   {
     "slug": "payout-get-payouts",
     "tag": "Payout",
-    "summary": "Get payouts for business API key",
+    "summary": "List Payouts",
     "method": "GET",
     "path": "/payout",
     "filename": "payout-get-payouts.json"
@@ -138,7 +138,7 @@
   {
     "slug": "payout-create-payout",
     "tag": "Payout",
-    "summary": "Create a new payout for business API key",
+    "summary": "Create Payout",
     "method": "POST",
     "path": "/payout",
     "filename": "payout-create-payout.json"
@@ -146,7 +146,7 @@
   {
     "slug": "payout-inquire-account",
     "tag": "Payout",
-    "summary": "Inquire account details for business API key",
+    "summary": "Inquire Account",
     "method": "POST",
     "path": "/payout/inquire-account",
     "filename": "payout-inquire-account.json"
@@ -154,7 +154,7 @@
   {
     "slug": "payout-get-payout-info",
     "tag": "Payout",
-    "summary": "Get payout information including fees and validation requirements for business API key",
+    "summary": "Get Payout Info",
     "method": "POST",
     "path": "/payout/payout-info",
     "filename": "payout-get-payout-info.json"
@@ -162,7 +162,7 @@
   {
     "slug": "payout-get-payout-status",
     "tag": "Payout",
-    "summary": "Get payout status for business API key",
+    "summary": "Get Payout Status",
     "method": "GET",
     "path": "/payout/status/{id}",
     "filename": "payout-get-payout-status.json"
@@ -170,7 +170,7 @@
   {
     "slug": "payout-get-payout-details",
     "tag": "Payout",
-    "summary": "Get specific payout details for business API key",
+    "summary": "Get Payout Details",
     "method": "GET",
     "path": "/payout/{id}",
     "filename": "payout-get-payout-details.json"

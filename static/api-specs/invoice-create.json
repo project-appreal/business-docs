@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Create a new invoice",
+    "title": "Create Invoice",
     "version": ""
   },
   "servers": [
@@ -23,7 +23,7 @@
     "/invoices": {
       "post": {
         "operationId": "InvoiceBusinessController_create",
-        "summary": "Create a new invoice",
+        "summary": "Create Invoice",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -53,14 +53,12 @@
             "description": "Unauthorized - Invalid API key"
           }
         },
-        "tags": [
-          "Invoice"
-        ],
         "security": [
           {
             "X-API-Key": []
           }
-        ]
+        ],
+        "description": "Creates a new payment invoice in PREPARED status. The invoice is not yet active — use the [Activate Invoice](/api/invoice-activate) endpoint to assign a wallet and begin accepting payments.\n\n**Typical flow**: Create Invoice → Activate Invoice → Monitor status via webhooks.\n\n> **Note:** Set a `webhookUrl` to receive real-time status updates. Do not rely solely on polling — use webhooks as the primary notification mechanism."
       }
     }
   },

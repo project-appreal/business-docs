@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Get exchange rates for a specific crypto asset",
+    "title": "Get Exchange Rates by Asset",
     "version": ""
   },
   "servers": [
@@ -23,8 +23,8 @@
     "/exchange-rates/{asset}": {
       "get": {
         "operationId": "ExchangeRateBusinessController_getCryptoRates",
-        "summary": "Get exchange rates for a specific crypto asset",
-        "description": "Returns exchange rates for a specific crypto asset (e.g., BTC, ETH, USDT) to all fiat currencies, including supported networks.",
+        "summary": "Get Exchange Rates by Asset",
+        "description": "Returns exchange rates for a specific crypto asset (e.g., BTC, ETH, USDT) to all supported fiat currencies, including available networks.\n\n> **Tip:** Use this endpoint to display estimated prices to customers before creating an invoice.",
         "parameters": [
           {
             "name": "asset",
@@ -67,9 +67,6 @@
             "description": "Asset not found"
           }
         },
-        "tags": [
-          "Exchange Rates"
-        ],
         "security": [
           {
             "X-API-Key": []
