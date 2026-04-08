@@ -21,73 +21,33 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal {
-  width: 95vw;
-  height: 92vh;
   background: var(--ifm-background-color);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
 }
 
-.modalHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--ifm-color-emphasis-200);
-  flex-shrink: 0;
-}
-
-.modalTitle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  font-family: var(--ifm-font-family-monospace);
-}
-
-.methodBadge {
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: white;
-}
-
-.get { background: #22c55e; }
-.post { background: #3b82f6; }
-.put { background: #f59e0b; }
-.patch { background: #f59e0b; }
-.delete { background: #ef4444; }
-
-.closeButton {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--ifm-color-emphasis-600);
-  padding: 0 4px;
-  line-height: 1;
-}
-
-.closeButton:hover {
-  color: var(--ifm-color-emphasis-900);
-}
-
-.iframe {
-  flex: 1;
+.scalarContainer {
   width: 100%;
+  height: 100%;
+}
+
+.closeButtonFloat {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1001;
+  background: var(--ifm-color-emphasis-800);
+  color: white;
   border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.closeButtonFloat:hover {
+  background: var(--ifm-color-emphasis-900);
 }
