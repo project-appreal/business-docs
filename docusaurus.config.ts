@@ -84,11 +84,6 @@ const config: Config = {
           label: 'API Reference',
         },
         {
-          label: 'API Client',
-          to: '/api-client',
-          position: 'left',
-        },
-        {
           type: 'html',
           position: 'right',
           value: '<span class="api-version-badge">v1.0</span>',
