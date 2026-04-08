@@ -37,6 +37,7 @@ const config: Config = {
         label: 'API Reference',
         route: '/api',
         showNavLink: false,
+        cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.28',
         configuration: {
           url: '/openapi.json',
           hideClientButton: true,
