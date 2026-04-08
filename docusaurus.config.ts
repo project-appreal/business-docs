@@ -1,6 +1,5 @@
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import type { ScalarOptions } from '@scalar/docusaurus';
 
 const config: Config = {
   title: 'Appreal API',
@@ -30,19 +29,7 @@ const config: Config = {
     ],
   ],
 
-  plugins: [
-    [
-      '@scalar/docusaurus',
-      {
-        label: 'API Reference',
-        route: '/api',
-        showNavLink: false,
-        configuration: {
-          url: '/openapi.json',
-        },
-      } as ScalarOptions,
-    ],
-  ],
+  plugins: ['./plugins/api-endpoint-pages'],
 
   themeConfig: {
     navbar: {
@@ -58,6 +45,11 @@ const config: Config = {
           label: 'API Reference',
           to: '/api',
           position: 'left',
+        },
+        {
+          type: 'html',
+          position: 'right',
+          value: '<span class="api-version-badge">v1.0</span>',
         },
       ],
     },

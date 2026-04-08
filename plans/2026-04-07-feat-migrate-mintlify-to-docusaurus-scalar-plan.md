@@ -11,7 +11,7 @@ date: 2026-04-07
 
 Replace the Mintlify-based docs (cloud-hosted, account-required) with a fully self-hosted Docusaurus site using the `@scalar/docusaurus` plugin for an interactive OpenAPI reference. No Scalar account required. Deploy to Netlify with automatic deploys on push to `main`.
 
-**Brainstorm:** `docs/brainstorms/2026-04-07-mintlify-to-docusaurus-scalar-brainstorm.md`
+**Brainstorm:** `brainstorms/2026-04-07-mintlify-to-docusaurus-scalar-brainstorm.md`
 
 ---
 
