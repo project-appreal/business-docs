@@ -1,1 +1,0 @@
-{"parameters":[{"name":"x-idempotency-key","required":true,"in":"header","schema":{"type":"string"}},{"name":"X-Idempotency-Key","in":"header","description":"Optional idempotency key to prevent duplicate payout creation. Use a unique string (e.g., UUID) to ensure the same request returns the same result if retried.","required":false,"schema":{"type":"string"}}]}

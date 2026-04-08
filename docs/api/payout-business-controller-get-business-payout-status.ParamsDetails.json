@@ -1,1 +1,0 @@
-{"parameters":[{"name":"id","required":true,"in":"path","description":"Payout public ID (24-char alphanumeric)","schema":{"type":"string"}}]}

@@ -1,6 +1,5 @@
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import type * as OpenApiPlugin from 'docusaurus-plugin-openapi-docs';
 import type { ScalarOptions } from '@scalar/docusaurus';
 
 const config: Config = {
@@ -22,7 +21,6 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/',
-          docItemComponent: '@theme/ApiItem',
         },
         blog: false,
         theme: {
@@ -36,36 +34,17 @@ const config: Config = {
     [
       '@scalar/docusaurus',
       {
-        label: 'API Client',
-        route: '/api-client',
+        label: 'API Reference',
+        route: '/api',
         showNavLink: false,
         configuration: {
           url: '/openapi.json',
+          hideClientButton: true,
+          hideModels: true,
         },
       } as ScalarOptions,
     ],
-    [
-      'docusaurus-plugin-openapi-docs',
-      {
-        id: 'api',
-        docsPluginId: 'classic',
-        config: {
-          appreal: {
-            specPath: 'static/openapi.json',
-            outputDir: 'docs/api',
-            sidebarOptions: {
-              groupPathsBy: 'tag',
-              categoryLinkSource: 'tag',
-            },
-            showSchemas: false,
-            downloadUrl: '/openapi.json',
-          } satisfies OpenApiPlugin.Options,
-        },
-      },
-    ],
   ],
-
-  themes: ['docusaurus-theme-openapi-docs'],
 
   themeConfig: {
     navbar: {
@@ -78,10 +57,9 @@ const config: Config = {
           label: 'Guides',
         },
         {
-          type: 'docSidebar',
-          sidebarId: 'apiSidebar',
-          position: 'left',
           label: 'API Reference',
+          to: '/api',
+          position: 'left',
         },
         {
           type: 'html',
@@ -93,36 +71,6 @@ const config: Config = {
     footer: {
       style: 'dark',
       copyright: `Copyright © ${new Date().getFullYear()} Appreal`,
-    },
-    languageTabs: [
-      {
-        highlight: 'bash',
-        language: 'curl',
-        logoClass: 'bash',
-      },
-      {
-        highlight: 'python',
-        language: 'python',
-        logoClass: 'python',
-      },
-      {
-        highlight: 'javascript',
-        language: 'nodejs',
-        logoClass: 'nodejs',
-      },
-      {
-        highlight: 'go',
-        language: 'go',
-        logoClass: 'go',
-      },
-      {
-        highlight: 'php',
-        language: 'php',
-        logoClass: 'php',
-      },
-    ],
-    api: {
-      authPersistance: 'localStorage',
     },
   } satisfies Preset.ThemeConfig,
 };

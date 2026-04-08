@@ -1,1 +1,0 @@
-{"responses":{"200":{"description":"Business payouts retrieved successfully"},"401":{"description":"Unauthorized - API key required"},"403":{"description":"Forbidden - Business API access required"}}}

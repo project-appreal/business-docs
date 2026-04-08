@@ -1,1 +1,0 @@
-{"responses":{"200":{"description":"Balance history retrieved successfully"},"401":{"description":"Unauthorized - Invalid API key"},"403":{"description":"Forbidden - Balance does not belong to business"},"404":{"description":"Account balance not found"}}}

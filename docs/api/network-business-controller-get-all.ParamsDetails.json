@@ -1,1 +1,0 @@
-{"parameters":[{"name":"isActive","required":false,"in":"query","description":"Filter by active status","schema":{"default":true,"type":"boolean"}},{"name":"blockchainType","required":false,"in":"query","description":"Filter by blockchain type (EVM, TRON, SOLANA)","schema":{"enum":["EVM","SOLANA","TRON","VIRTUAL"],"type":"string"}}]}
