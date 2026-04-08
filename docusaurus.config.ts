@@ -1,6 +1,8 @@
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import type * as OpenApiPlugin from 'docusaurus-plugin-openapi-docs';
+import type { ScalarOptions } from '@scalar/docusaurus';
+
 const config: Config = {
   title: 'Appreal API',
   tagline: 'Accept cryptocurrency payments with a single API',
@@ -31,18 +33,17 @@ const config: Config = {
   ],
 
   plugins: [
-    function scalarClientPlugin() {
-      return {
-        name: 'scalar-client-webpack',
-        configureWebpack() {
-          return {
-            resolve: {
-              conditionNames: ['import', 'require', 'default'],
-            },
-          };
+    [
+      '@scalar/docusaurus',
+      {
+        label: 'API Client',
+        route: '/api-client',
+        showNavLink: false,
+        configuration: {
+          url: '/openapi.json',
         },
-      };
-    },
+      } as ScalarOptions,
+    ],
     [
       'docusaurus-plugin-openapi-docs',
       {
