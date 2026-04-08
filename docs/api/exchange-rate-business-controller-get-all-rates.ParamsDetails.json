@@ -1,0 +1,1 @@
+{"parameters":[{"name":"currencies","required":false,"in":"query","description":"Comma-separated list of fiat currency symbols to filter (e.g., USD,IDR)","schema":{"type":"array","items":{"type":"string"}}}]}

@@ -1,0 +1,1 @@
+{"parameters":[{"name":"isActive","required":false,"in":"query","description":"Filter by active status","schema":{"default":true,"type":"boolean"}},{"name":"networkId","required":false,"in":"query","description":"Filter by network ID","schema":{"type":"string"}},{"name":"symbol","required":false,"in":"query","description":"Search by symbol","schema":{"type":"string"}}]}

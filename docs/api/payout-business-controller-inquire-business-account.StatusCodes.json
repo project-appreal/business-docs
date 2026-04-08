@@ -1,0 +1,1 @@
+{"responses":{"200":{"description":"The account details have been retrieved successfully."},"400":{"description":"Bad request"},"401":{"description":"Unauthorized - API key required"},"403":{"description":"Forbidden - Business API access required"}}}

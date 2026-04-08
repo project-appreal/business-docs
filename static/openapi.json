@@ -35,7 +35,7 @@
           }
         },
         "tags": [
-          "Invoice - Business API"
+          "Invoice"
         ],
         "security": [
           {
@@ -191,7 +191,7 @@
           }
         },
         "tags": [
-          "Invoice - Business API"
+          "Invoice"
         ],
         "security": [
           {
@@ -234,7 +234,7 @@
           }
         },
         "tags": [
-          "Invoice - Business API"
+          "Invoice"
         ],
         "security": [
           {
@@ -289,7 +289,7 @@
           }
         },
         "tags": [
-          "Invoice - Business API"
+          "Invoice"
         ],
         "security": [
           {
@@ -346,7 +346,7 @@
           }
         },
         "tags": [
-          "Invoice - Business API"
+          "Invoice"
         ],
         "security": [
           {
@@ -402,7 +402,7 @@
           }
         },
         "tags": [
-          "Invoice - Business API"
+          "Invoice"
         ],
         "security": [
           {
@@ -534,7 +534,7 @@
           }
         },
         "tags": [
-          "Balances - Business API"
+          "Balances"
         ],
         "security": [
           {
@@ -579,7 +579,7 @@
           }
         },
         "tags": [
-          "Balances - Business API"
+          "Balances"
         ],
         "security": [
           {
@@ -733,7 +733,7 @@
           }
         },
         "tags": [
-          "Balances - Business API"
+          "Balances"
         ],
         "security": [
           {
@@ -887,7 +887,7 @@
           }
         },
         "tags": [
-          "Balances - Business API"
+          "Balances"
         ],
         "security": [
           {
@@ -931,7 +931,7 @@
           }
         },
         "tags": [
-          "Exchange Rates - Business API"
+          "Exchange Rates"
         ],
         "security": [
           {
@@ -988,7 +988,7 @@
           }
         },
         "tags": [
-          "Exchange Rates - Business API"
+          "Exchange Rates"
         ],
         "security": [
           {
@@ -1050,7 +1050,7 @@
           }
         },
         "tags": [
-          "Currencies - Business API"
+          "Currencies"
         ],
         "security": [
           {
@@ -1096,7 +1096,7 @@
           }
         },
         "tags": [
-          "Currencies - Business API"
+          "Currencies"
         ],
         "security": [
           {
@@ -1155,7 +1155,7 @@
           }
         },
         "tags": [
-          "Networks - Business API"
+          "Networks"
         ],
         "security": [
           {
@@ -1198,7 +1198,7 @@
           }
         },
         "tags": [
-          "Networks - Business API"
+          "Networks"
         ],
         "security": [
           {
@@ -1329,7 +1329,7 @@
           }
         },
         "tags": [
-          "Payout - Business API"
+          "Payout"
         ],
         "security": [
           {
@@ -1394,7 +1394,7 @@
           }
         },
         "tags": [
-          "Payout - Business API"
+          "Payout"
         ],
         "security": [
           {
@@ -1433,7 +1433,7 @@
           }
         },
         "tags": [
-          "Payout - Business API"
+          "Payout"
         ],
         "security": [
           {
@@ -1472,7 +1472,7 @@
           }
         },
         "tags": [
-          "Payout - Business API"
+          "Payout"
         ],
         "security": [
           {
@@ -1515,7 +1515,7 @@
           }
         },
         "tags": [
-          "Payout - Business API"
+          "Payout"
         ],
         "security": [
           {
@@ -1561,7 +1561,7 @@
           }
         },
         "tags": [
-          "Payout - Business API"
+          "Payout"
         ],
         "security": [
           {
@@ -1577,7 +1577,32 @@
     "version": "1.0",
     "contact": {}
   },
-  "tags": [],
+  "tags": [
+    {
+      "name": "Invoice",
+      "description": "Create, manage, and track payment invoices"
+    },
+    {
+      "name": "Balances",
+      "description": "View account balances and transaction history"
+    },
+    {
+      "name": "Exchange Rates",
+      "description": "Get current cryptocurrency exchange rates"
+    },
+    {
+      "name": "Currencies",
+      "description": "List supported currencies and their details"
+    },
+    {
+      "name": "Networks",
+      "description": "List supported blockchain networks"
+    },
+    {
+      "name": "Payout",
+      "description": "Create and manage payouts"
+    }
+  ],
   "servers": [
     {
       "url": "https://api.appreal.com/api/business/v1",
@@ -1586,10 +1611,6 @@
     {
       "url": "https://dev.appreal.xyz/api/business/v1",
       "description": "Development"
-    },
-    {
-      "url": "http://localhost:8000/api/business/v1",
-      "description": "Local"
     }
   ],
   "components": {
@@ -1902,231 +1923,6 @@
           }
         }
       },
-      "CreateInvoiceAdminDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "UpdateInvoiceAdminDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "CurrencyDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Currency ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "Currency name"
-          },
-          "currencyType": {
-            "type": "string",
-            "enum": [
-              "FIAT",
-              "CRYPTO"
-            ],
-            "description": "Currency type"
-          },
-          "contractAddress": {
-            "type": "object",
-            "description": "Contract address"
-          },
-          "symbol": {
-            "type": "string",
-            "description": "Currency symbol"
-          },
-          "decimals": {
-            "type": "number",
-            "description": "Decimals"
-          },
-          "paymentDecimals": {
-            "type": "number",
-            "description": "Payment decimals"
-          },
-          "logo": {
-            "type": "string",
-            "description": "Currency logo URL"
-          },
-          "networkId": {
-            "type": "string",
-            "description": "Network ID"
-          },
-          "parentId": {
-            "type": "object",
-            "description": "Parent currency ID"
-          },
-          "isNative": {
-            "type": "boolean",
-            "description": "Is native currency"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Is active"
-          },
-          "isUsedForPayment": {
-            "type": "boolean",
-            "description": "Is used for payment"
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Created timestamp"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Updated timestamp"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "currencyType",
-          "symbol",
-          "decimals",
-          "paymentDecimals",
-          "isNative",
-          "isActive",
-          "isUsedForPayment",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "AccountDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Account ID"
-          },
-          "subId": {
-            "type": "string",
-            "description": "Sub ID"
-          },
-          "email": {
-            "type": "string",
-            "description": "Email"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "BACKOFFICE_ADMIN",
-              "BACKOFFICE_CUSTOMER_SERVICE",
-              "BACKOFFICE_SALES",
-              "BACKOFFICE_TREASURY",
-              "CARD_ADMIN",
-              "MERCHANT"
-            ],
-            "description": "Account role"
-          },
-          "isOnboarded": {
-            "type": "boolean",
-            "description": "Is onboarded"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "SUSPENDED",
-              "INACTIVE",
-              "DELETED"
-            ],
-            "description": "Account status"
-          },
-          "userType": {
-            "type": "string",
-            "enum": [
-              "INDIVIDUAL",
-              "BUSINESS"
-            ],
-            "description": "User type"
-          },
-          "isKYCCompleted": {
-            "type": "boolean",
-            "description": "Is KYC completed"
-          },
-          "isKYBCompleted": {
-            "type": "boolean",
-            "description": "Is KYB completed"
-          },
-          "authProvider": {
-            "type": "string",
-            "enum": [
-              "COGNITO_USER",
-              "COGNITO_ADMIN",
-              "HMAC"
-            ],
-            "description": "Auth provider"
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Created timestamp"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Updated timestamp"
-          }
-        },
-        "required": [
-          "id",
-          "subId",
-          "email",
-          "role",
-          "isOnboarded",
-          "status",
-          "userType",
-          "authProvider",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "NetworkDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Network ID"
-          },
-          "chainId": {
-            "type": "object",
-            "description": "Chain ID"
-          },
-          "network": {
-            "type": "string",
-            "description": "Network identifier"
-          },
-          "networkName": {
-            "type": "string",
-            "description": "Network name"
-          },
-          "logo": {
-            "type": "object",
-            "description": "Network logo URL"
-          },
-          "blockExplorerUrl": {
-            "type": "object",
-            "description": "Block explorer URL"
-          },
-          "blockExplorerName": {
-            "type": "object",
-            "description": "Block explorer name"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Is active"
-          }
-        },
-        "required": [
-          "id",
-          "network",
-          "networkName",
-          "isActive"
-        ]
-      },
       "AccountBalanceResponseDto": {
         "type": "object",
         "properties": {
@@ -2216,85 +2012,6 @@
           "status",
           "createdAt",
           "updatedAt"
-        ]
-      },
-      "CreateAccountBalanceDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "CurrencyRateResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Currency rate ID"
-          },
-          "sourceCurrencyId": {
-            "type": "string",
-            "description": "Source currency ID"
-          },
-          "destinationCurrencyId": {
-            "type": "string",
-            "description": "Destination currency ID"
-          },
-          "providerId": {
-            "type": "string",
-            "description": "Currency Provider ID"
-          },
-          "rate": {
-            "type": "number",
-            "description": "Exchange rate value"
-          },
-          "provider": {
-            "type": "object",
-            "description": "Rate provider"
-          },
-          "fetchedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "When the rate was fetched"
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "When the rate was created"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "When the rate was last updated"
-          }
-        },
-        "required": [
-          "id",
-          "sourceCurrencyId",
-          "destinationCurrencyId",
-          "providerId",
-          "rate",
-          "provider",
-          "fetchedAt",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "PriceResponseDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "SyncResponseDto": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "description": "Whether the sync was successful"
-          },
-          "message": {
-            "type": "string",
-            "description": "Additional sync details"
-          }
-        },
-        "required": [
-          "success"
         ]
       },
       "NetworkInfoDto": {
@@ -2552,192 +2269,6 @@
           "lastUpdated"
         ]
       },
-      "ProviderInfoDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Provider ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "Provider name"
-          },
-          "priority": {
-            "type": "number",
-            "description": "Provider priority (lower = higher priority)"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether provider is active"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "priority",
-          "isActive"
-        ]
-      },
-      "ProviderMappingResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Mapping ID"
-          },
-          "currencyId": {
-            "type": "string",
-            "description": "Currency ID"
-          },
-          "providerId": {
-            "type": "string",
-            "description": "Provider ID"
-          },
-          "externalId": {
-            "type": "string",
-            "description": "External ID used by the provider"
-          },
-          "sellSpread": {
-            "type": "number",
-            "description": "Sell spread percentage"
-          },
-          "buySpread": {
-            "type": "number",
-            "description": "Buy spread percentage"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Created timestamp"
-          },
-          "lastSyncAt": {
-            "type": "object",
-            "description": "Last sync timestamp",
-            "nullable": true
-          },
-          "currency": {
-            "description": "Currency information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/CurrencyInfoDto"
-              }
-            ]
-          },
-          "provider": {
-            "description": "Provider information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ProviderInfoDto"
-              }
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "currencyId",
-          "providerId",
-          "externalId",
-          "sellSpread",
-          "buySpread",
-          "createdAt",
-          "currency",
-          "provider"
-        ]
-      },
-      "CreateProviderMappingDto": {
-        "type": "object",
-        "properties": {
-          "currencyId": {
-            "type": "string",
-            "description": "Currency ID"
-          },
-          "providerId": {
-            "type": "string",
-            "description": "Provider ID"
-          },
-          "externalId": {
-            "type": "string",
-            "description": "External ID used by the provider (e.g., \"bitcoin\" for CoinGecko)"
-          },
-          "sellSpread": {
-            "type": "number",
-            "description": "Sell spread percentage (0-100)",
-            "default": 1,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "buySpread": {
-            "type": "number",
-            "description": "Buy spread percentage (0-100)",
-            "default": 1,
-            "minimum": 0,
-            "maximum": 100
-          }
-        },
-        "required": [
-          "currencyId",
-          "providerId",
-          "externalId"
-        ]
-      },
-      "UpdateProviderMappingDto": {
-        "type": "object",
-        "properties": {
-          "externalId": {
-            "type": "string",
-            "description": "External ID used by the provider"
-          },
-          "sellSpread": {
-            "type": "number",
-            "description": "Sell spread percentage (0-100)",
-            "minimum": 0,
-            "maximum": 100
-          },
-          "buySpread": {
-            "type": "number",
-            "description": "Buy spread percentage (0-100)",
-            "minimum": 0,
-            "maximum": 100
-          }
-        }
-      },
-      "CurrencyProviderResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Provider ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "Provider name"
-          },
-          "priority": {
-            "type": "number",
-            "description": "Provider priority (lower = higher priority)"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether provider is active"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Created timestamp"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Updated timestamp"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "priority",
-          "isActive",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
       "CurrencyBusinessResponseDto": {
         "type": "object",
         "properties": {
@@ -2790,14 +2321,6 @@
           "decimals"
         ]
       },
-      "CreateCurrencyDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "UpdateCurrencyDto": {
-        "type": "object",
-        "properties": {}
-      },
       "NetworkBusinessResponseDto": {
         "type": "object",
         "properties": {
@@ -2839,20 +2362,12 @@
           "networkName"
         ]
       },
-      "CreateNetworkDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "UpdateNetworkDto": {
-        "type": "object",
-        "properties": {}
-      },
       "CreatePayoutDto": {
         "type": "object",
         "properties": {
           "accountId": {
             "type": "string",
-            "description": "Account ID that will be charged for this payout. Optional for merchants (uses their account), required for admins",
+            "description": "Account ID that will be charged for this payout. Optional for merchants (uses their account), Account identifier",
             "format": "uuid"
           },
           "amount": {
@@ -3026,7 +2541,7 @@
           },
           "accountId": {
             "type": "string",
-            "description": "Account ID to get payout info for. Optional for merchants (uses their account), required for admins",
+            "description": "Account ID to get payout info for. Optional for merchants (uses their account), Account identifier",
             "format": "uuid"
           }
         },
@@ -3036,31 +2551,6 @@
           "sourceCurrencyId",
           "payoutType"
         ]
-      },
-      "CompletePayoutDto": {
-        "type": "object",
-        "properties": {
-          "referenceText": {
-            "type": "string",
-            "description": "Reference text for the payout completion (required)"
-          }
-        },
-        "required": [
-          "referenceText"
-        ]
-      },
-      "FailPayoutDto": {
-        "type": "object",
-        "properties": {
-          "failureReason": {
-            "type": "string",
-            "description": "Failure reason for the payout (optional - will use default if not provided)"
-          },
-          "notes": {
-            "type": "string",
-            "description": "Additional notes about the failure (optional)"
-          }
-        }
       },
       "PayoutBusinessResponseDto": {
         "type": "object",
@@ -3133,61 +2623,6 @@
           "createdAt",
           "updatedAt"
         ]
-      },
-      "CreatePayoutLimitDto": {
-        "type": "object",
-        "properties": {
-          "payoutProviderId": {
-            "type": "string",
-            "description": "Payout provider ID",
-            "format": "uuid"
-          },
-          "currencyId": {
-            "type": "string",
-            "description": "Currency ID to apply this limit to",
-            "format": "uuid"
-          },
-          "period": {
-            "type": "string",
-            "description": "Limit period",
-            "enum": [
-              "DAILY",
-              "WEEKLY",
-              "MONTHLY"
-            ]
-          },
-          "minTransactionAmount": {
-            "type": "string",
-            "description": "Minimum transaction amount (decimal string)",
-            "minLength": 1,
-            "example": "10000"
-          },
-          "maxTransactionAmount": {
-            "type": "string",
-            "description": "Maximum transaction amount (decimal string)",
-            "minLength": 1,
-            "example": "50000000"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of this limit rule"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether this limit is active",
-            "default": true
-          }
-        },
-        "required": [
-          "payoutProviderId",
-          "period",
-          "minTransactionAmount",
-          "maxTransactionAmount"
-        ]
-      },
-      "UpdatePayoutLimitDto": {
-        "type": "object",
-        "properties": {}
       }
     }
   },

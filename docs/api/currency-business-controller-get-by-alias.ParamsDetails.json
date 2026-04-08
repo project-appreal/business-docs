@@ -1,0 +1,1 @@
+{"parameters":[{"name":"alias","required":true,"in":"path","description":"Currency alias (e.g., usdt_binance)","schema":{"type":"string"}}]}

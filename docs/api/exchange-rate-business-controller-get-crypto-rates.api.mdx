@@ -1,0 +1,69 @@
+---
+id: exchange-rate-business-controller-get-crypto-rates
+title: "Get exchange rates for a specific crypto asset"
+description: "Returns exchange rates for a specific crypto asset (e.g., BTC, ETH, USDT) to all fiat currencies, including supported networks."
+sidebar_label: "Get exchange rates for a specific crypto asset"
+hide_title: true
+hide_table_of_contents: true
+api: eJzNV8Fu2zgQ/RWCpwSQ43TRk29ubDRGu93AsYEtCiOgqZHFhiJZknLjGvr3xZCSLVXO2gH2sKdE0szwzcyb4fOeagOWeaHVLKUjOn3hOVMbmDMPH0onFDh3p5W3WkqwTxvwd3ZnvMbvjiY0BcetMOhPR3QOvrTKEaijEItmJNOWMOIMcJEJTniIQJhz4MkV3GxuEvJhcZeQ6eI+IcvHyeKa4HcpSSaYJ7y0FhQX4BIiFJdlKtSGuNIYbT2kRIH/qe2zu6EJNcyyAjxYR0ff9lSxAuiIhqNoQi38KIWFlI68LSGhAkEb5vNeJndtjG5XrLV8BSpNqOM5FIyO9hReWGEkHvlhcUcT6ncGH5y3Qm1oVSUHSMekOrgyJl0D7EcJdtdHpouCDRxgppi9FM4TnXVKtashO6xjJqQH26BfPk6S2WTehV3DZNYyPFB4KFzr/QF+tUKszmjlIBj8cXuLf7oIp93uW/BWwBZS4krOwbmslBKP4Vp5UB4DMGOk4IGGw+8Oo+z78PT6O3Bso7FIWi8ihtjcHtoLOkqrJHp/CT15U4TQxiqhUm/0eddx8EFbspx/Rr+GtP3yPfaIPeQ5EyrOkc+FIw2fz/TtlYKFaDjtZxNGQzKbtPCed/oSDYlIQXmRiSP1wOdgoSwS4q1W162ol9X/viyYGlhgKVtLaKpz6ETd0/NZdWeEaBWL2mSIsC7jQxMIzU+FCYX+fBFBYqnbBLmMWAcMbVccLMu4H6epBXdikvs7JToQFj3IVaCafgblQp9S4KJgsh1KlcUabC/UAp1IY0+u1lLz51AIYixw4UTdesN2BSg/uTjyQ3RoxU6FM5LtOoGr9jb9duD6kcBd0q0S6oUPG7sm7kxleuJ1jBRuuRMD9a8LL+zczr1FE8rSVKA5kw+dYexGxkO9KMB5VpjzfVs0puRnDqo+/idYIBl4nkOKhd4yKdKl8uKC2TgZEF6MsECYSonLdSlTsgZiIbPgwhG/lbxZTsfN2tp2TU3baXYgthrSUhrz+tKJjcET39++66/OpWKlz7UVvyAlA/KncA6lgrZEqHAGGT/MyDPsaIjwvh8hLmqlPcl0qWJynm1QTRzbHMXPKqEOeGmF3wWt8fdg/DAbfAJ8WuFNWYDPNYqqTahH0BkjOmzE0SBUYrgPdarwPga7bYRLaSUd0dx740bDITPihhljgckbrgt8Hq5rdTbcvuuPitVpycMDSo5usBS2h2Avu19ng01gC1IbnD1atZJ+xPs5kriV+lFMGIEvai2TA0vDTNfy5+jRuyofZuQT7MJl18Ai2Fa8TqJEoAl9GaSQsVJ6OqJf/1rOn8YPs6dP069P99P5NHRNqCzuz5pN45hyYMCANNr25PGlgzScr9XA4jAg9XWWxQdvmXKM10CwY9Hz3c1tLWoYRz2CIIx2vmBBztSJfwT/Bnn8O7z9UTT9D8R23WkPL35oJBPItki2fc32b7TLdprQUUxsldBcO48m+/2aOVhaWVX4OspeHIJUOLzpj7L41Vr8d6L4ZE64MX6T7FsmSzQMI7FlViDSN6K+mtdr85q86ffGSYzN2KldG12DPRa9WlVJM4oINX4bcw7Gt7x6aryzzT5OF7jdS+xve9qfwzDX/2D0k4jagx+Pj+v4FfP9Pu6RqjrYx0+vehw2TbTG4qyqqvoHNhIlOQ==
+sidebar_class_name: "get api-method"
+info_path: api/appreal-api-business
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Get exchange rates for a specific crypto asset"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/exchange-rates/{asset}"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Returns exchange rates for a specific crypto asset (e.g., BTC, ETH, USDT) to all fiat currencies, including supported networks.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./exchange-rate-business-controller-get-crypto-rates.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./exchange-rate-business-controller-get-crypto-rates.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./exchange-rate-business-controller-get-crypto-rates.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

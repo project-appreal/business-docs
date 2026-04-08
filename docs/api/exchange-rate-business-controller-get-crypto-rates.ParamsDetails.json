@@ -1,0 +1,1 @@
+{"parameters":[{"name":"asset","required":true,"in":"path","description":"Crypto asset symbol (e.g., BTC, ETH, USDT)","schema":{"example":"BTC","type":"string"}},{"name":"currencies","required":false,"in":"query","description":"Comma-separated list of fiat currency symbols to filter (e.g., USD,IDR)","schema":{"type":"array","items":{"type":"string"}}}]}
