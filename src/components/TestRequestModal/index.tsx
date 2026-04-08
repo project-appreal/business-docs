@@ -1,4 +1,5 @@
-import React, { useCallback, useRef, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 import styles from './styles.module.css';
 
 interface TestRequestModalProps {
@@ -6,87 +7,56 @@ interface TestRequestModalProps {
   path: string;
 }
 
-export default function TestRequestModal({ method, path }: TestRequestModalProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+type ScalarClient = {
+  open: (payload?: { path: string; method: string }) => void;
+};
 
-  const open = useCallback(() => setIsOpen(true), []);
-  const close = useCallback(() => setIsOpen(false), []);
+let clientInstance: ScalarClient | null = null;
+let clientInitPromise: Promise<ScalarClient> | null = null;
 
-  useEffect(() => {
-    if (!isOpen || !containerRef.current) return;
-    document.body.style.overflow = 'hidden';
+async function getClient(): Promise<ScalarClient> {
+  if (clientInstance) return clientInstance;
+  if (clientInitPromise) return clientInitPromise;
 
-    const el = containerRef.current;
+  clientInitPromise = (async () => {
+    const mod = await import('@scalar/api-client-modal');
 
-    // Build hash to deep-link to the right endpoint
-    const cleanPath = path.replace(/^\//, '');
-    const tagMap: Record<string, string> = {
-      'invoices': 'invoice',
-      'account-balances': 'balances',
-      'exchange-rates': 'exchange-rates',
-      'currencies': 'currencies',
-      'networks': 'networks',
-      'payout': 'payout',
-    };
-    const firstSegment = cleanPath.split('/')[0];
-    const tag = tagMap[firstSegment] || firstSegment;
+    const el = document.createElement('div');
+    document.body.appendChild(el);
 
-    // Set hash so Scalar navigates to the right endpoint
-    const origHash = window.location.hash;
-    window.location.hash = `tag/${tag}/${method.toUpperCase()}/${cleanPath}`;
+    const client = await mod.createScalarApiClient(el, {
+      spec: { url: '/openapi.json' },
+      showSidebar: false,
+    });
 
-    // Render Scalar into the overlay container
-    const w = window as any;
-    if (w.Scalar?.createApiReference) {
-      w.Scalar.createApiReference(el, {
-        url: '/openapi.json',
-        hideDarkModeToggle: true,
-      });
-    }
+    clientInstance = client;
+    return client;
+  })();
 
-    // Auto-click "Test Request" button for this endpoint once Scalar renders
-    const target = `${method.toLowerCase()} ${path}`;
-    const tryClick = (attempts = 0) => {
-      if (attempts > 30 || !isOpen) return;
-      const buttons = el.querySelectorAll('button.show-api-client-button');
-      for (const btn of buttons) {
-        const text = btn.textContent?.toLowerCase() || '';
-        if (text.includes(target)) {
-          (btn as HTMLElement).click();
-          return;
-        }
-      }
-      setTimeout(() => tryClick(attempts + 1), 300);
-    };
-    setTimeout(() => tryClick(), 1500);
+  return clientInitPromise;
+}
 
-    return () => {
-      document.body.style.overflow = '';
-      window.location.hash = origHash;
-      // Clean up Scalar from the container
-      el.innerHTML = '';
-    };
-  }, [isOpen, method, path]);
+function TestRequestButton({ method, path }: TestRequestModalProps) {
+  const handleClick = useCallback(async () => {
+    const client = await getClient();
+    client.open({ path, method: method.toLowerCase() });
+  }, [method, path]);
 
   return (
-    <>
-      <button
-        className={styles.testRequestButton}
-        onClick={open}
-        type="button"
-      >
-        Test Request
-      </button>
+    <button
+      className={styles.testRequestButton}
+      onClick={handleClick}
+      type="button"
+    >
+      Test Request
+    </button>
+  );
+}
 
-      {isOpen && (
-        <div className={styles.overlay}>
-          <button className={styles.closeButtonFloat} onClick={close} type="button">
-            &times; Close
-          </button>
-          <div ref={containerRef} className={styles.scalarContainer} />
-        </div>
-      )}
-    </>
+export default function TestRequestModal(props: TestRequestModalProps) {
+  return (
+    <BrowserOnly>
+      {() => <TestRequestButton {...props} />}
+    </BrowserOnly>
   );
 }
