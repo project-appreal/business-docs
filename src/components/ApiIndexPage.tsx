@@ -1,23 +1,7 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import ApiConfig from './ApiConfig';
-
-interface Endpoint {
-  slug: string;
-  tag: string;
-  summary: string;
-  method: string;
-  path: string;
-  filename: string;
-}
-
-const METHOD_COLORS: Record<string, string> = {
-  GET: '#61affe',
-  POST: '#49cc90',
-  PUT: '#fca130',
-  PATCH: '#50e3c2',
-  DELETE: '#f93e3e',
-};
+import { Endpoint, METHOD_COLORS } from '../lib/api-shared';
 
 export default function ApiIndexPage({ manifest }: { manifest: Endpoint[] }) {
   const byTag = new Map<string, Endpoint[]>();

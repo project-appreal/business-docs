@@ -368,11 +368,3 @@
   margin: 8px 0 0;
 }
 
-.api-version-badge {
-  background: var(--ifm-color-primary);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}

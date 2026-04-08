@@ -1,27 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-const STORAGE_KEY = 'appreal-api-config';
-
-const SERVERS = [
-  { url: 'https://api.appreal.com/api/business/v1', label: 'Production' },
-  { url: 'https://dev.appreal.xyz/api/business/v1', label: 'Development' },
-];
-
-function load(): { serverUrl?: string; apiKey?: string } {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  } catch {
-    return {};
-  }
-}
-
-function save(data: { serverUrl: string; apiKey: string }) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {
-    // localStorage unavailable
-  }
-}
+import { SERVERS, loadSavedConfig, saveConfig } from '../lib/api-shared';
 
 export default function ApiConfig() {
   const [serverUrl, setServerUrl] = useState(SERVERS[0].url);
@@ -29,13 +7,13 @@ export default function ApiConfig() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const config = load();
+    const config = loadSavedConfig();
     if (config.serverUrl) setServerUrl(config.serverUrl);
     if (config.apiKey) setApiKey(config.apiKey);
   }, []);
 
   const handleSave = () => {
-    save({ serverUrl, apiKey });
+    saveConfig({ serverUrl, apiKey });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -70,8 +48,9 @@ export default function ApiConfig() {
         {saved ? 'Saved!' : 'Save for API Playground'}
       </button>
       <p className="api-config__hint">
-        These values are stored in your browser's localStorage and will be
-        pre-filled on all API endpoint pages. They are never sent to our servers.
+        Use a <strong>test or development API key</strong> only. Never enter your
+        production key in a browser-based playground. Values are stored in your
+        browser's localStorage and are never sent to our servers.
       </p>
     </div>
   );

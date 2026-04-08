@@ -1,59 +1,70 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
 import { useLocation } from '@docusaurus/router';
-
-interface Endpoint {
-  slug: string;
-  tag: string;
-  summary: string;
-  method: string;
-  path: string;
-  filename: string;
-}
+import {
+  Endpoint,
+  METHOD_COLORS,
+  SCALAR_CDN_URL,
+  SCALAR_CDN_SRI,
+  COPY_ICON_SVG,
+  DEFAULT_SERVER_URL,
+  loadSavedConfig,
+  saveConfig,
+} from '../lib/api-shared';
 
 interface Props {
   endpoint: Endpoint;
   manifest: Endpoint[];
 }
 
-const STORAGE_KEY = 'appreal-api-config';
+const MAX_RETRIES = 50;
 
-const METHOD_COLORS: Record<string, string> = {
-  GET: '#61affe',
-  POST: '#49cc90',
-  PUT: '#fca130',
-  PATCH: '#50e3c2',
-  DELETE: '#f93e3e',
-};
-
-const METHOD_BG: Record<string, string> = {
-  GET: 'rgba(97, 175, 254, 0.15)',
-  POST: 'rgba(73, 204, 144, 0.15)',
-  PUT: 'rgba(252, 161, 48, 0.15)',
-  PATCH: 'rgba(80, 227, 194, 0.15)',
-  DELETE: 'rgba(249, 62, 62, 0.15)',
-};
-
-function loadSavedConfig(): { serverUrl?: string; apiKey?: string } {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  } catch {
-    return {};
-  }
+/**
+ * Ensures the Scalar CDN script is loaded (only once, only on API pages).
+ * Returns a promise that resolves when window.Scalar is available.
+ */
+function ensureScalarLoaded(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (window.Scalar) {
+      resolve();
+      return;
+    }
+    // Check if script tag already exists
+    if (!document.querySelector(`script[src="${SCALAR_CDN_URL}"]`)) {
+      const script = document.createElement('script');
+      script.src = SCALAR_CDN_URL;
+      script.integrity = SCALAR_CDN_SRI;
+      script.crossOrigin = 'anonymous';
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('Failed to load Scalar CDN'));
+      document.head.appendChild(script);
+    } else {
+      // Script exists but hasn't loaded yet — poll
+      let retries = 0;
+      const check = () => {
+        if (window.Scalar) resolve();
+        else if (retries++ > MAX_RETRIES) reject(new Error('Scalar failed to initialize'));
+        else setTimeout(check, 100);
+      };
+      check();
+    }
+  });
 }
 
-function saveConfig(update: { serverUrl?: string; apiKey?: string }) {
-  try {
-    const current = loadSavedConfig();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...current, ...update }));
-  } catch {
-    // localStorage unavailable
-  }
-}
-
-function watchModalChanges() {
+/**
+ * Watch for server URL and API key changes in the Scalar Test Request modal.
+ *
+ * Scalar v1.28 DOM dependency: This function scrapes Scalar's internal DOM to
+ * detect changes. The selectors below are coupled to Scalar v1.28's rendering.
+ * If the CDN pin is bumped, these selectors must be verified.
+ *
+ * - Server URL: headlessui popover button with sr-only "Server:" label
+ * - API key: input inside .request-section-content-auth
+ */
+function watchModalChanges(scalarContainer: HTMLElement) {
   let lastKey = '';
   let lastServer = '';
+  let clickTimeout: ReturnType<typeof setTimeout> | null = null;
 
   function syncFromDom() {
     const serverButtons = document.querySelectorAll<HTMLButtonElement>(
@@ -72,7 +83,7 @@ function watchModalChanges() {
     }
 
     const authInputs = document.querySelectorAll<HTMLInputElement>(
-      '.request-section-content-auth input, [class*="auth"] input'
+      '.request-section-content-auth input'
     );
     for (const input of authInputs) {
       if (input.value && input.value !== lastKey) {
@@ -93,7 +104,8 @@ function watchModalChanges() {
   };
 
   const clickHandler = () => {
-    setTimeout(syncFromDom, 200);
+    if (clickTimeout) clearTimeout(clickTimeout);
+    clickTimeout = setTimeout(syncFromDom, 200);
   };
 
   const observer = new MutationObserver(() => {
@@ -103,7 +115,7 @@ function watchModalChanges() {
   document.addEventListener('input', inputHandler, true);
   document.addEventListener('change', inputHandler, true);
   document.addEventListener('click', clickHandler, true);
-  observer.observe(document.body, {
+  observer.observe(scalarContainer, {
     subtree: true,
     childList: true,
     characterData: true,
@@ -113,32 +125,82 @@ function watchModalChanges() {
     document.removeEventListener('input', inputHandler, true);
     document.removeEventListener('change', inputHandler, true);
     document.removeEventListener('click', clickHandler, true);
+    if (clickTimeout) clearTimeout(clickTimeout);
     observer.disconnect();
   };
 }
 
-function CopyableApiPath({ method, path }: { method: string; path: string }) {
-  const [copied, setCopied] = useState(false);
+/**
+ * Injects a copyable API path (method badge + full URL) under Scalar's
+ * visible endpoint title (h3.section-header-label).
+ *
+ * Uses DOM API (not innerHTML) to avoid XSS from localStorage-sourced values.
+ */
+function injectCopyablePath(
+  container: HTMLElement,
+  method: string,
+  apiPath: string,
+  serverUrl: string,
+  cancelled: () => boolean,
+) {
+  let retries = 0;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(path).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+  const attempt = () => {
+    if (cancelled() || retries++ > MAX_RETRIES) return;
+
+    const headings = container.querySelectorAll('h3.section-header-label');
+    let heading: Element | null = null;
+    for (const h of headings) {
+      if (h.getBoundingClientRect().height > 0) {
+        heading = h;
+        break;
+      }
+    }
+    if (!heading) {
+      setTimeout(attempt, 200);
+      return;
+    }
+
+    const wrapper = heading.closest('.section-header-wrapper') || heading.closest('.section-header');
+    const target = wrapper || heading.parentElement?.parentElement || heading.parentElement;
+    if (!target || target.querySelector('.api-path-line')) return;
+
+    const fullUrl = serverUrl + apiPath;
+
+    const pathEl = document.createElement('div');
+    pathEl.className = 'api-path-line';
+    pathEl.title = 'Click to copy';
+
+    const methodSpan = document.createElement('span');
+    methodSpan.className = 'api-path-line__method';
+    methodSpan.style.background = METHOD_COLORS[method] || '#999';
+    methodSpan.textContent = method;
+
+    const urlCode = document.createElement('code');
+    urlCode.className = 'api-path-line__url';
+    urlCode.textContent = fullUrl;
+
+    const copyIcon = document.createElement('span');
+    copyIcon.className = 'api-path-line__copy-icon';
+    copyIcon.innerHTML = COPY_ICON_SVG;
+
+    pathEl.appendChild(methodSpan);
+    pathEl.appendChild(urlCode);
+    pathEl.appendChild(copyIcon);
+
+    pathEl.addEventListener('click', () => {
+      navigator.clipboard.writeText(fullUrl).catch(() => {});
+      copyIcon.textContent = 'Copied!';
+      setTimeout(() => {
+        copyIcon.textContent = '';
+        copyIcon.innerHTML = COPY_ICON_SVG;
+      }, 1500);
     });
+
+    target.after(pathEl);
   };
 
-  return (
-    <div className="api-path-line" onClick={handleCopy} title="Click to copy">
-      <span
-        className="api-path-line__method"
-        style={{ background: METHOD_COLORS[method] || '#999' }}
-      >
-        {method}
-      </span>
-      <code className="api-path-line__url">{path}</code>
-      {copied && <span className="api-path-line__copied">Copied!</span>}
-    </div>
-  );
+  setTimeout(attempt, 500);
 }
 
 function ApiSidebar({ manifest, currentSlug }: { manifest: Endpoint[]; currentSlug: string }) {
@@ -148,7 +210,6 @@ function ApiSidebar({ manifest, currentSlug }: { manifest: Endpoint[]; currentSl
     byTag.get(ep.tag)!.push(ep);
   }
 
-  // Find which tag the current endpoint belongs to
   const currentTag = manifest.find((ep) => ep.slug === currentSlug)?.tag;
 
   return (
@@ -232,13 +293,22 @@ export default function ApiEndpointPage({ endpoint, manifest }: Props) {
     const el = scalarRef.current;
     if (!el) return;
 
-    el.innerHTML = '';
+    let cancelled = false;
+    const controller = new AbortController();
+
+    el.textContent = '';
 
     const saved = loadSavedConfig();
 
-    fetch(`/api-specs/${endpoint.filename}`)
-      .then((res) => res.json())
+    fetch(`/api-specs/${endpoint.filename}`, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Failed to load spec: ${res.status}`);
+        return res.json();
+      })
       .then((spec) => {
+        if (cancelled) return;
+
+        // Reorder servers so saved selection is first
         if (saved.serverUrl && spec.servers) {
           const idx = spec.servers.findIndex(
             (s: { url: string }) => s.url === saved.serverUrl
@@ -249,9 +319,10 @@ export default function ApiEndpointPage({ endpoint, manifest }: Props) {
           }
         }
 
-        const tryInit = () => {
-          if ((window as any).Scalar) {
-            (window as any).Scalar.createApiReference(el, {
+        ensureScalarLoaded()
+          .then(() => {
+            if (cancelled) return;
+            window.Scalar!.createApiReference(el, {
               content: JSON.stringify(spec),
               hideClientButton: true,
               hideModels: true,
@@ -266,58 +337,24 @@ export default function ApiEndpointPage({ endpoint, manifest }: Props) {
               },
             });
 
-            // Inject copyable API path under Scalar's visible title
-            const injectPath = () => {
-              const headings = el.querySelectorAll('h3.section-header-label');
-              let heading: Element | null = null;
-              for (const h of headings) {
-                if (h.getBoundingClientRect().height > 0) {
-                  heading = h;
-                  break;
-                }
-              }
-              if (!heading) {
-                setTimeout(injectPath, 200);
-                return;
-              }
-
-              // Walk up to find the section-header-wrapper or a block-level ancestor
-              let container = heading.closest('.section-header-wrapper') || heading.closest('.section-header');
-              if (!container) container = heading.parentElement?.parentElement || heading.parentElement;
-              if (!container || container.querySelector('.api-path-line')) return;
-
-              // Use the saved server or default production URL
-              const saved = loadSavedConfig();
-              const baseUrl = saved.serverUrl || spec.servers?.[0]?.url || 'https://api.appreal.com/api/business/v1';
-              const fullUrl = baseUrl + endpoint.path;
-
-              const pathEl = document.createElement('div');
-              pathEl.className = 'api-path-line';
-              pathEl.title = 'Click to copy';
-              pathEl.innerHTML = `<span class="api-path-line__method" style="background:${METHOD_COLORS[endpoint.method] || '#999'}">${endpoint.method}</span><code class="api-path-line__url">${fullUrl}</code><span class="api-path-line__copy-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>`;
-              pathEl.addEventListener('click', () => {
-                navigator.clipboard.writeText(fullUrl).then(() => {
-                  const icon = pathEl.querySelector('.api-path-line__copy-icon');
-                  if (icon) {
-                    icon.textContent = 'Copied!';
-                    setTimeout(() => {
-                      icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-                    }, 1500);
-                  }
-                });
-              });
-              container.after(pathEl);
-            };
-            setTimeout(injectPath, 500);
-          } else {
-            setTimeout(tryInit, 100);
-          }
-        };
-        tryInit();
+            const baseUrl = saved.serverUrl || spec.servers?.[0]?.url || DEFAULT_SERVER_URL;
+            injectCopyablePath(el, endpoint.method, endpoint.path, baseUrl, () => cancelled);
+          })
+          .catch((err) => console.error('Scalar initialization failed:', err));
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.error('Failed to load API spec:', err);
+        }
       });
 
-    const cleanupWatcher = watchModalChanges();
-    return cleanupWatcher;
+    const cleanupWatcher = watchModalChanges(el);
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+      cleanupWatcher();
+    };
   }, [endpoint.filename, location.pathname]);
 
   return (

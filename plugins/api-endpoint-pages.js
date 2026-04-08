@@ -9,18 +9,8 @@ module.exports = function apiEndpointPages(context) {
   return {
     name: 'api-endpoint-pages',
 
-    injectHtmlTags() {
-      return {
-        preBodyTags: [
-          {
-            tagName: 'script',
-            attributes: {
-              src: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.28',
-            },
-          },
-        ],
-      };
-    },
+    // Scalar CDN is loaded dynamically per-page by ApiEndpointPage.tsx
+    // (not injected globally) to avoid loading on guide pages.
 
     async contentLoaded({ actions }) {
       const { addRoute, createData } = actions;
