@@ -111,10 +111,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AccountBalanceBusinessResponseDto"
-                  }
+                  "$ref": "#/components/schemas/AccountBalanceBusinessResponseDto"
                 }
               }
             }
@@ -310,7 +307,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Balance history retrieved successfully"
+            "description": "Balance history retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceHistoryItemDto"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized - Invalid API key"
@@ -604,10 +608,10 @@
             }
           },
           {
-            "name": "networkId",
+            "name": "networkSlug",
             "required": false,
             "in": "query",
-            "description": "Filter by network ID",
+            "description": "Filter by network slug (e.g., ethereum, polygon)",
             "schema": {
               "type": "string"
             }
@@ -743,13 +747,15 @@
         "summary": "List invoices for the authenticated account",
         "parameters": [
           {
-            "name": "cursor",
+            "name": "page",
             "required": false,
             "in": "query",
-            "description": "Cursor from previous response (ID of the last item)",
+            "description": "Page number (1-based)",
             "schema": {
-              "example": "550e8400-e29b-41d4-a716-446655440000",
-              "type": "string"
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
             }
           },
           {
@@ -762,25 +768,6 @@
               "maximum": 100,
               "default": 20,
               "type": "number"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search keyword",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "sortBy",
-            "required": false,
-            "in": "query",
-            "description": "Field to sort by",
-            "schema": {
-              "example": "createdAt",
-              "type": "string"
             }
           },
           {
@@ -875,11 +862,34 @@
                 ]
               }
             }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Sort by field",
+            "schema": {
+              "default": "createdAt",
+              "enum": [
+                "createdAt",
+                "amount",
+                "status",
+                "number"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Invoices retrieved successfully"
+            "description": "Invoices retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceBusinessResponseDto"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized - Invalid API key"
@@ -1213,13 +1223,15 @@
         "summary": "Get payouts for business API key",
         "parameters": [
           {
-            "name": "cursor",
+            "name": "page",
             "required": false,
             "in": "query",
-            "description": "Cursor from previous response (ID of the last item)",
+            "description": "Page number (1-based)",
             "schema": {
-              "example": "550e8400-e29b-41d4-a716-446655440000",
-              "type": "string"
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
             }
           },
           {
@@ -1232,25 +1244,6 @@
               "maximum": 100,
               "default": 20,
               "type": "number"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search keyword",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "sortBy",
-            "required": false,
-            "in": "query",
-            "description": "Field to sort by",
-            "schema": {
-              "example": "createdAt",
-              "type": "string"
             }
           },
           {
@@ -1303,15 +1296,17 @@
             }
           },
           {
-            "name": "processingType",
+            "name": "sortBy",
             "required": false,
             "in": "query",
-            "description": "Filter by payout provider processing type - prioritize EXTERNAL for automated processing",
+            "description": "Sort by field",
             "schema": {
-              "example": "EXTERNAL",
+              "default": "createdAt",
               "enum": [
-                "INTERNAL",
-                "EXTERNAL"
+                "createdAt",
+                "amount",
+                "status",
+                "number"
               ],
               "type": "string"
             }
@@ -1319,7 +1314,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Business payouts retrieved successfully"
+            "description": "Business payouts retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutBusinessResponseDto"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized - API key required"
@@ -1364,7 +1366,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreatePayoutDto"
+                "$ref": "#/components/schemas/CreateBusinessPayoutDto"
               }
             }
           }
@@ -1388,6 +1390,9 @@
           },
           "403": {
             "description": "Forbidden - Business API access required"
+          },
+          "404": {
+            "description": "Routing, currency, or network not found"
           },
           "409": {
             "description": "Conflict - Payout creation already in progress for this idempotency key"
@@ -1413,14 +1418,21 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AccountInquiryDto"
+                "$ref": "#/components/schemas/BusinessAccountInquiryDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The account details have been retrieved successfully."
+            "description": "The account details have been retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountInquiryResponseDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad request"
@@ -1430,6 +1442,9 @@
           },
           "403": {
             "description": "Forbidden - Business API access required"
+          },
+          "404": {
+            "description": "Routing, currency, or network not found"
           }
         },
         "tags": [
@@ -1452,14 +1467,21 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PayoutInfoDto"
+                "$ref": "#/components/schemas/BusinessPayoutInfoDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The payout information has been retrieved successfully."
+            "description": "The payout information has been retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutInfoResponseDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad request"
@@ -1469,6 +1491,9 @@
           },
           "403": {
             "description": "Forbidden - Business API access required"
+          },
+          "404": {
+            "description": "Routing, currency, or network not found"
           }
         },
         "tags": [
@@ -1487,22 +1512,27 @@
         "summary": "Get status progression history for a specific payout (business API)",
         "parameters": [
           {
-            "name": "cursor",
+            "name": "page",
             "required": false,
             "in": "query",
-            "description": "Cursor from previous response",
+            "description": "Page number (1-based)",
             "schema": {
-              "type": "string"
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "type": "number"
             }
           },
           {
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Items per page",
+            "description": "Number of items per page",
             "schema": {
-              "example": 10,
-              "type": "string"
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
             }
           },
           {
@@ -1511,6 +1541,7 @@
             "in": "query",
             "description": "Sort direction",
             "schema": {
+              "default": "desc",
               "enum": [
                 "asc",
                 "desc"
@@ -1530,13 +1561,20 @@
         ],
         "responses": {
           "200": {
-            "description": "Payout status progression retrieved successfully"
+            "description": "Payout status progression retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutHistoryBusinessResponseDto"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized - API key required"
           },
           "404": {
-            "description": "Payout not found"
+            "description": "Payout not found or does not belong to this account"
           }
         },
         "tags": [
@@ -2036,6 +2074,151 @@
           "updatedAt"
         ]
       },
+      "CurrencyInfoDto": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "description": "Currency symbol",
+            "example": "USDT"
+          },
+          "name": {
+            "type": "string",
+            "description": "Currency name",
+            "example": "Tether USD"
+          },
+          "logo": {
+            "type": "string",
+            "description": "Currency icon URL",
+            "example": "https://example.com/icons/usdt.png"
+          },
+          "currencyType": {
+            "type": "string",
+            "enum": [
+              "FIAT",
+              "CRYPTO"
+            ],
+            "description": "Currency type"
+          },
+          "decimals": {
+            "type": "number",
+            "description": "Decimals"
+          },
+          "paymentDecimals": {
+            "type": "number",
+            "description": "Payment decimals"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Is active"
+          },
+          "isUsedForPayment": {
+            "type": "boolean",
+            "description": "Is used for payment"
+          }
+        },
+        "required": [
+          "symbol",
+          "name",
+          "currencyType",
+          "decimals",
+          "paymentDecimals",
+          "isActive",
+          "isUsedForPayment"
+        ]
+      },
+      "ReferenceInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "object",
+            "description": "Public identifier of the referenced invoice or payout (CUID2)",
+            "example": "r6rfa164imtrp2u93d3dvcl2",
+            "nullable": true
+          },
+          "number": {
+            "type": "string",
+            "description": "Human-readable reference number (invoice number for INVOICE, payout number for PAYOUT/PAYOUT_FEE, empty for ADJUSTMENT)",
+            "example": "INV-001234"
+          }
+        }
+      },
+      "BalanceHistoryItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Balance history entry ID (internal, omitted in business API)"
+          },
+          "dateTime": {
+            "type": "string",
+            "description": "Transaction date and time (ISO 8601)",
+            "example": "2024-01-15T14:30:25.000Z"
+          },
+          "type": {
+            "type": "string",
+            "description": "Transaction type",
+            "enum": [
+              "INVOICE",
+              "PAYOUT",
+              "PAYOUT_FEE",
+              "ADJUSTMENT"
+            ],
+            "example": "INVOICE"
+          },
+          "status": {
+            "type": "string",
+            "description": "Transaction status (CREDIT increases balance, DEBIT decreases)",
+            "enum": [
+              "CREDIT",
+              "DEBIT",
+              "NEGATIVE_ADJ"
+            ],
+            "example": "CREDIT"
+          },
+          "creditAmount": {
+            "type": "object",
+            "description": "Credit amount (In) - populated when status is CREDIT, null otherwise",
+            "example": "100.50",
+            "nullable": true
+          },
+          "debitAmount": {
+            "type": "object",
+            "description": "Debit amount (Out) - populated when status is DEBIT, null otherwise",
+            "example": "50.00",
+            "nullable": true
+          },
+          "balanceAfter": {
+            "type": "string",
+            "description": "Balance after this transaction",
+            "example": "1500.75"
+          },
+          "currency": {
+            "description": "Currency information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CurrencyInfoDto"
+              }
+            ]
+          },
+          "reference": {
+            "description": "Reference to the source transaction",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReferenceInfoDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "dateTime",
+          "type",
+          "status",
+          "balanceAfter",
+          "currency",
+          "reference"
+        ]
+      },
       "CreateAccountBalanceDto": {
         "type": "object",
         "properties": {}
@@ -2072,11 +2255,14 @@
           "logo": {
             "type": "string",
             "description": "Network logo URL"
+          },
+          "blockExplorerUrl": {
+            "type": "string",
+            "description": "Block explorer URL"
           }
         },
         "required": [
           "id",
-          "chainId",
           "network",
           "networkName"
         ]
@@ -2125,8 +2311,12 @@
             "description": "Currency logo URL"
           },
           "network": {
-            "type": "object",
-            "description": "Network information"
+            "description": "Network information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BusinessNetworkDto"
+              }
+            ]
           }
         },
         "required": [
@@ -2226,19 +2416,24 @@
             "type": "string"
           },
           "exchangeRate": {
-            "type": "number"
+            "type": "string",
+            "description": "Exchange rate applied"
           },
           "expiredAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           },
           "reference": {
-            "type": "object"
+            "type": "object",
+            "description": "Custom reference data attached to the invoice"
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           },
           "sourceCurrency": {
             "$ref": "#/components/schemas/BusinessCurrencyDto"
@@ -2555,30 +2750,6 @@
           "rates",
           "timestamp",
           "validUntil"
-        ]
-      },
-      "CurrencyInfoDto": {
-        "type": "object",
-        "properties": {
-          "symbol": {
-            "type": "string",
-            "description": "Currency symbol",
-            "example": "USDT"
-          },
-          "name": {
-            "type": "string",
-            "description": "Currency name",
-            "example": "Tether USD"
-          },
-          "logo": {
-            "type": "object",
-            "description": "Currency logo URL",
-            "example": "https://example.com/usdt.png"
-          }
-        },
-        "required": [
-          "symbol",
-          "name"
         ]
       },
       "ExchangeRateItemDto": {
@@ -3084,16 +3255,20 @@
             ]
           },
           "amount": {
-            "type": "string"
+            "type": "string",
+            "description": "Payout amount"
           },
           "exchangeRate": {
-            "type": "string"
+            "type": "string",
+            "description": "Exchange rate applied"
           },
           "feeAmount": {
-            "type": "string"
+            "type": "string",
+            "description": "Fee amount charged"
           },
           "receivedAmount": {
-            "type": "string"
+            "type": "string",
+            "description": "Amount received by recipient"
           },
           "referenceText": {
             "type": "string"
@@ -3102,10 +3277,12 @@
             "type": "string"
           },
           "createdAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           },
           "updatedAt": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           },
           "sourceCurrency": {
             "$ref": "#/components/schemas/BusinessCurrencyDto"
@@ -3124,6 +3301,285 @@
           "feeAmount",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "CreateBusinessPayoutDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount to be paid out",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "destinationCurrencyAlias": {
+            "type": "string",
+            "description": "Destination currency alias (e.g., idr_bca)",
+            "example": "idr_bca"
+          },
+          "sourceCurrencyAlias": {
+            "type": "string",
+            "description": "Source currency alias (e.g., usdt_polygon)",
+            "example": "usdt_polygon"
+          },
+          "networkSlug": {
+            "type": "string",
+            "description": "Network slug (e.g., polygon, arbitrum-one)",
+            "example": "polygon"
+          },
+          "payoutProviderName": {
+            "type": "string",
+            "description": "Payout provider name",
+            "example": "intrajasa"
+          },
+          "payoutType": {
+            "type": "string",
+            "description": "Type of payout",
+            "enum": [
+              "FIAT_FIAT",
+              "FIAT_CRYPTO",
+              "CRYPTO_FIAT",
+              "CRYPTO_CRYPTO"
+            ]
+          },
+          "recipientId": {
+            "type": "string",
+            "description": "Existing recipient ID",
+            "format": "uuid"
+          },
+          "recipientName": {
+            "type": "string",
+            "description": "Recipient full name"
+          },
+          "recipientIdNumber": {
+            "type": "string",
+            "description": "Recipient ID number"
+          },
+          "recipientPlaceOfBirth": {
+            "type": "string",
+            "description": "Recipient place of birth"
+          },
+          "recipientBirthDate": {
+            "type": "string",
+            "description": "Recipient birth date"
+          },
+          "recipientAddress": {
+            "type": "string",
+            "description": "Recipient address"
+          },
+          "recipientPhone": {
+            "type": "string",
+            "description": "Recipient phone number"
+          },
+          "recipientCountryId": {
+            "type": "string",
+            "description": "Country ID for bank transfers",
+            "format": "uuid"
+          },
+          "recipientBankId": {
+            "type": "string",
+            "description": "Bank ID for bank transfers",
+            "format": "uuid"
+          },
+          "recipientBankAccountNumber": {
+            "type": "string",
+            "description": "Bank account number for bank transfers"
+          },
+          "walletAddress": {
+            "type": "string",
+            "description": "Wallet address for cryptocurrency transfers"
+          },
+          "walletOwnerName": {
+            "type": "string",
+            "description": "Wallet owner name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description or purpose of the payout"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata for the payout"
+          }
+        },
+        "required": [
+          "amount",
+          "destinationCurrencyAlias",
+          "sourceCurrencyAlias",
+          "networkSlug",
+          "payoutProviderName",
+          "payoutType"
+        ]
+      },
+      "BusinessAccountInquiryDto": {
+        "type": "object",
+        "properties": {
+          "bankCode": {
+            "type": "string",
+            "description": "Bank code for the account",
+            "minLength": 1
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Account number to inquire",
+            "minLength": 1
+          },
+          "destinationCurrencyAlias": {
+            "type": "string",
+            "description": "Destination currency alias",
+            "example": "idr_bca"
+          },
+          "sourceCurrencyAlias": {
+            "type": "string",
+            "description": "Source currency alias",
+            "example": "usdt_polygon"
+          },
+          "networkSlug": {
+            "type": "string",
+            "description": "Network slug",
+            "example": "polygon"
+          },
+          "payoutProviderName": {
+            "type": "string",
+            "description": "Payout provider name",
+            "example": "intrajasa"
+          }
+        },
+        "required": [
+          "bankCode",
+          "accountNumber",
+          "destinationCurrencyAlias",
+          "sourceCurrencyAlias",
+          "networkSlug",
+          "payoutProviderName"
+        ]
+      },
+      "AccountInquiryResponseDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          },
+          "accountName": {
+            "type": "string",
+            "description": "Account holder name",
+            "example": "John Doe"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Account number",
+            "example": "1234567890"
+          },
+          "bankCode": {
+            "type": "string",
+            "description": "Bank code",
+            "example": "BCA"
+          },
+          "error": {
+            "type": "object",
+            "description": "Error details if inquiry failed"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "BusinessPayoutInfoDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount to get payout info for",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "destinationCurrencyAlias": {
+            "type": "string",
+            "description": "Destination currency alias",
+            "example": "idr_bca"
+          },
+          "sourceCurrencyAlias": {
+            "type": "string",
+            "description": "Source currency alias",
+            "example": "usdt_polygon"
+          },
+          "payoutType": {
+            "type": "string",
+            "description": "Type of payout",
+            "enum": [
+              "FIAT_FIAT",
+              "FIAT_CRYPTO",
+              "CRYPTO_FIAT",
+              "CRYPTO_CRYPTO"
+            ]
+          },
+          "networkSlug": {
+            "type": "string",
+            "description": "Network slug",
+            "example": "polygon"
+          },
+          "payoutProviderName": {
+            "type": "string",
+            "description": "Payout provider name",
+            "example": "intrajasa"
+          }
+        },
+        "required": [
+          "amount",
+          "destinationCurrencyAlias",
+          "sourceCurrencyAlias",
+          "payoutType",
+          "networkSlug",
+          "payoutProviderName"
+        ]
+      },
+      "PayoutInfoResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "Payout information data"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PayoutHistoryBusinessResponseDto": {
+        "type": "object",
+        "properties": {
+          "previousStatus": {
+            "type": "object",
+            "description": "Previous payout status",
+            "example": "REQUESTED"
+          },
+          "newStatus": {
+            "type": "string",
+            "description": "New payout status",
+            "example": "PROCESSING"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source of the status change",
+            "example": "SYSTEM"
+          },
+          "action": {
+            "type": "object",
+            "description": "Action that triggered the change",
+            "example": "PROCESS"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "When the status change occurred",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "newStatus",
+          "source",
+          "createdAt"
         ]
       },
       "CreatePayoutLimitDto": {
