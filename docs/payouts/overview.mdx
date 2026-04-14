@@ -1,0 +1,49 @@
+---
+title: Payouts Overview
+description: Send funds to bank accounts or crypto wallets using the Appreal Business API
+---
+
+# Payouts Overview
+
+Appreal Payouts lets you send funds to recipients — whether to bank accounts (fiat) or crypto wallets.
+Use payouts to pay contractors, refund customers, or distribute funds across your operations.
+
+## Prerequisites
+
+Before sending payouts, make sure you have:
+
+1. **An Appreal account** — Sign up and complete onboarding
+2. **An API key** — Generate one from the Merchant Dashboard ([learn how](/authentication))
+3. **A positive balance** — Fund your account with sufficient balance for the payout amount plus fees
+
+## Payout types
+
+Appreal supports four types of payouts depending on the source and destination currencies:
+
+| Type | From | To | Example |
+|---|---|---|---|
+| `CRYPTO_FIAT` | Crypto balance | Bank account | USDT &rarr; IDR (bank transfer) |
+| `CRYPTO_CRYPTO` | Crypto balance | Crypto wallet | USDT &rarr; ETH (wallet) |
+| `FIAT_FIAT` | Fiat balance | Bank account | IDR &rarr; IDR (bank transfer) |
+| `FIAT_CRYPTO` | Fiat balance | Crypto wallet | USD &rarr; USDT (wallet) |
+
+## Fees
+
+Payout fees consist of:
+
+- **Provider fee** — A percentage-based fee plus optional fixed component, determined by the payout routing
+- **Compliance fees** — Country-specific regulatory fees (e.g., tax withholding), calculated in stages
+
+Fees can vary by destination country, currency pair, and payout provider. Use the
+[Payout Info endpoint](/payouts/sending-a-payout#step-2-get-payout-info) to preview the exact fee
+breakdown before creating a payout.
+
+## Idempotency
+
+All payout creation requests support an optional `X-Idempotency-Key` header (UUID format).
+If you send the same idempotency key twice, the second request returns the existing payout instead
+of creating a duplicate. This protects against network retries and double-sends.
+
+:::info What's Next
+Follow the step-by-step guide to [send your first payout](/payouts/sending-a-payout).
+:::

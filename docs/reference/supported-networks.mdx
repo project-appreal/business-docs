@@ -1,0 +1,78 @@
+---
+title: Supported Networks
+description: Blockchain networks supported by the Appreal Business API
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Supported Networks
+
+Appreal supports multiple blockchain networks for receiving payments and sending payouts.
+Each network has different characteristics in terms of speed, cost, and supported assets.
+
+## Available networks
+
+| Network | Slug | Chain ID | Type | Block Confirmations |
+|---|---|---|---|---|
+| Ethereum | `ethereum` | 1 | EVM | 3 |
+| Polygon | `polygon` | 137 | EVM | 3 |
+| BNB Smart Chain | `bsc` | 56 | EVM | 3 |
+| Arbitrum One | `arbitrum-one` | 42161 | EVM | 3 |
+| TRON | `tron` | — | TRON | 3 |
+
+## Network types
+
+| Type | Description | Networks |
+|---|---|---|
+| **EVM** | Ethereum Virtual Machine compatible chains | Ethereum, Polygon, BSC, Arbitrum |
+| **TRON** | TRON blockchain | TRON |
+
+## Listing networks via API
+
+Retrieve the list of supported networks:
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl https://api.appreal.com/api/business/v1/networks \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/networks',
+  {
+    headers: { 'x-api-key': process.env.API_KEY },
+  }
+);
+
+const networks = await response.json();
+```
+
+  </TabItem>
+</Tabs>
+
+### Query parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `isActive` | boolean | Filter by active status |
+| `blockchainType` | string | Filter by network type: `EVM`, `TRON` |
+
+### Get a specific network
+
+Retrieve details for a single network by its slug:
+
+```bash
+curl https://api.appreal.com/api/business/v1/networks/arbitrum-one \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+:::info What's Next
+See which currencies are available on each network in [Supported Currencies](/reference/supported-currencies).
+:::
