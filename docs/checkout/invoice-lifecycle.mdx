@@ -1,0 +1,115 @@
+---
+title: Invoice Lifecycle
+description: Understand invoice statuses and how they transition throughout the payment flow
+---
+
+# Invoice Lifecycle
+
+Every invoice goes through a series of statuses from creation to completion.
+Understanding these statuses helps you handle payments correctly and build robust integrations.
+
+## Invoice statuses
+
+### `PREPARED`
+
+The invoice has been created but the customer has not yet selected a payment method.
+The invoice remains in this state for up to **15 minutes** by default.
+
+- A wallet has **not** been assigned yet
+- The customer sees the payment method selection screen
+- Transitions to `ACTIVE` when the customer selects a currency and network
+
+### `ACTIVE`
+
+The customer has selected a payment method and a blockchain wallet has been assigned.
+The invoice is now waiting for the customer to send payment.
+
+- A unique wallet address is displayed to the customer
+- The payment window is **15 minutes** by default (configurable)
+- The exchange rate and expected amount are locked
+
+### `CONFIRMING`
+
+A payment has been detected on the blockchain but has not yet reached the required number of confirmations.
+
+- The transaction hash (`txHash`) is recorded
+- Appreal monitors the blockchain for additional confirmations
+- A background job checks confirmation status every **5 minutes**
+
+### `COMPLETED`
+
+The payment has been fully confirmed on the blockchain. This is the **final success state**.
+
+- The merchant's account balance has been credited
+- The customer is redirected to the `redirectUrl` (if provided)
+- A webhook notification is sent
+
+### `EXPIRED`
+
+The invoice expired before a payment was received or confirmed.
+
+- If no payment method was selected: `PREPARED` &rarr; `EXPIRED`
+- If payment method was selected but no payment received: `ACTIVE` &rarr; `EXPIRED`
+- The assigned wallet is released back to the pool
+- Expired invoices with no activity are purged after approximately 1 year
+
+### `CANCELLED`
+
+The merchant cancelled the invoice before it was completed.
+
+- Only invoices in `PREPARED` or `ACTIVE` status can be cancelled
+- Use `POST /invoices/:id/cancel` with a `reason` field
+- This is a **final state**
+
+## Payment statuses
+
+In addition to the invoice status, each invoice has a payment status that tracks the transaction:
+
+| Payment Status | Description |
+|---|---|
+| `UNPAID` | No payment has been detected |
+| `PROCESSING` | Payment detected, awaiting blockchain confirmations |
+| `PAID` | Exact amount confirmed |
+| `OVERPAID` | Customer sent more than the expected amount |
+| `UNDERPAID` | Customer sent less than expected (within tolerance) |
+
+## Status transitions
+
+```
+PREPARED ──────► ACTIVE ──────► CONFIRMING ──────► COMPLETED
+    │                │                 
+    │                │                 
+    ▼                ▼                 
+EXPIRED          EXPIRED              
+    │                │                 
+    │                │                 
+    ▼                ▼                 
+(purged)         (purged)             
+                                      
+PREPARED ──────► CANCELLED            
+ACTIVE ────────► CANCELLED            
+```
+
+### Key rules
+
+- An invoice can only move **forward** through the lifecycle (no going back to a previous status)
+- `COMPLETED` and `CANCELLED` are **final states**
+- `EXPIRED` is final unless txHash recovery is used (see [Handling Invoice Exceptions](/checkout/handling-invoice-exceptions))
+- Invoices in `CONFIRMING` status **cannot** be cancelled
+
+## Required confirmations
+
+All blockchain networks currently require **3 block confirmations** before a payment is considered confirmed:
+
+| Network | Confirmations Required |
+|---|---|
+| Ethereum | 3 |
+| Polygon | 3 |
+| BNB Smart Chain | 3 |
+| Arbitrum One | 3 |
+| TRON | 3 |
+
+:::info What's Next
+Learn how to handle edge cases like overpayments and expired invoices in
+[Handling Invoice Exceptions](/checkout/handling-invoice-exceptions).
+:::

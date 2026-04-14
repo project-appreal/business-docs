@@ -1,0 +1,44 @@
+---
+title: Invoice Overview
+description: Accept cryptocurrency payments from your customers using Appreal invoices
+---
+
+# Invoice Overview
+
+Appreal Invoice lets you accept cryptocurrency payments from your customers. You create an invoice
+via the API, redirect the customer to a hosted payment page, and receive a webhook when the payment
+is confirmed on the blockchain.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+1. **An Appreal account** — Sign up and complete onboarding
+2. **An API key** — Generate one from the Merchant Dashboard ([learn how](/authentication))
+3. **Webhook understanding** — Know how to receive and process webhooks ([learn how](/checkout/processing-webhooks))
+
+## How it works
+
+1. **Create an invoice** — Call `POST /invoices` with the amount and destination currency
+2. **Redirect the customer** — Use the `paymentUrl` from the response to send the customer to the hosted checkout page
+3. **Customer selects payment method** — The customer chooses which cryptocurrency and network to pay with
+4. **Payment is processed** — Appreal assigns a wallet, monitors the blockchain, and confirms the transaction
+5. **You receive a webhook** — A notification is sent to your `webhookUrl` when the payment status changes
+
+## Supported currencies
+
+Appreal supports receiving payments in the following cryptocurrencies:
+
+| Currency | Symbol | Networks |
+|---|---|---|
+| Tether | USDT | Ethereum, Polygon, BNB Smart Chain, Arbitrum One, TRON |
+| USD Coin | USDC | Ethereum, Polygon, BNB Smart Chain, Arbitrum One |
+
+:::tip
+The customer selects their preferred cryptocurrency and network on the hosted payment page.
+You only need to specify the settlement currency and amount when creating the invoice.
+:::
+
+:::info What's Next
+Follow the step-by-step guide to [create your first invoice](/checkout/creating-your-first-invoice).
+:::

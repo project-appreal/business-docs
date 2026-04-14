@@ -1,0 +1,154 @@
+---
+title: Handling Invoice Exceptions
+description: Handle overpayments, underpayments, expired invoices, and other edge cases
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Handling Invoice Exceptions
+
+Not every payment follows the happy path. Customers may overpay, underpay, or let invoices expire
+after partially sending funds. This guide covers how to handle these scenarios.
+
+## Overpayment
+
+When a customer sends **more** than the expected amount, the invoice is marked as `COMPLETED` with
+a payment status of `OVERPAID`.
+
+- The **full received amount** is credited to your merchant balance
+- The invoice is considered successfully paid
+- No automatic refund is issued — handle refunds manually if needed
+
+## Underpayment
+
+When a customer sends **less** than the expected amount but within the configured tolerance,
+the invoice is marked as `COMPLETED` with a payment status of `UNDERPAID`.
+
+- If the amount is within tolerance: the invoice completes normally
+- If the amount is significantly below the expected amount: the invoice may remain in `CONFIRMING`
+  until the tolerance window passes, then require manual resolution
+
+## Expired invoices
+
+An invoice expires when the payment window closes before a payment is detected:
+
+- **No payment method selected**: `PREPARED` &rarr; `EXPIRED` (no wallet was assigned)
+- **No payment received**: `ACTIVE` &rarr; `EXPIRED` (wallet is released back to pool)
+
+### Recovering an expired invoice with txHash
+
+If a customer sent payment to an expired invoice's wallet address, you can recover it by providing
+the transaction hash. This triggers Appreal to verify the transaction on the blockchain.
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl -X PATCH https://api.appreal.com/api/business/v1/invoices/inv_abc123def456 \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "txHash": "0xabc123def456789..."
+  }'
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/invoices/inv_abc123def456',
+  {
+    method: 'PATCH',
+    headers: {
+      'x-api-key': process.env.API_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      txHash: '0xabc123def456789...',
+    }),
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+If the transaction is valid, the invoice status is updated from `EXPIRED` to `COMPLETED` and your
+balance is credited.
+
+:::note
+txHash recovery is only available for invoices in `EXPIRED` status that had a wallet assigned
+(i.e., the customer had selected a payment method before the invoice expired).
+:::
+
+## Cancelling an invoice
+
+You can cancel an invoice that has not yet been paid:
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl -X POST https://api.appreal.com/api/business/v1/invoices/inv_abc123def456/cancel \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reason": "Customer requested cancellation"
+  }'
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/invoices/inv_abc123def456/cancel',
+  {
+    method: 'POST',
+    headers: {
+      'x-api-key': process.env.API_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      reason: 'Customer requested cancellation',
+    }),
+  }
+);
+```
+
+  </TabItem>
+</Tabs>
+
+### Cancellation rules
+
+| Invoice Status | Can cancel? |
+|---|---|
+| `PREPARED` | Yes |
+| `ACTIVE` | Yes |
+| `CONFIRMING` | No — payment already detected |
+| `COMPLETED` | No — already finalized |
+| `EXPIRED` | No — already finalized |
+| `CANCELLED` | No — already cancelled |
+
+## Updating invoice fields
+
+While an invoice is in `PREPARED` or `ACTIVE` status, you can update certain fields:
+
+| Field | Description |
+|---|---|
+| `customerEmail` | Update the customer's email |
+| `webhookUrl` | Change the webhook notification URL |
+| `redirectUrl` | Change the post-payment redirect URL |
+| `reference` | Update your internal reference |
+| `expiredAt` | Extend or shorten the expiration time |
+
+:::warning
+Updates are **blocked** when the invoice is in `COMPLETED`, `CONFIRMING`, `CANCELLED`, or `EXPIRED`
+status, or when the payment status is `PAID`, `UNDERPAID`, `OVERPAID`, or `PROCESSING`.
+:::
+
+:::info What's Next
+Ready to send funds? Learn about [Payouts](/payouts/overview) to send crypto or fiat to your recipients.
+:::

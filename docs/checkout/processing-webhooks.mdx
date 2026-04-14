@@ -1,0 +1,133 @@
+---
+title: Processing Webhooks
+description: Handle webhook notifications for invoice status changes
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Processing Webhooks
+
+When you provide a `webhookUrl` during invoice creation, Appreal sends an HTTP POST request to that
+URL every time the invoice status changes. This lets you automate order fulfillment, send confirmations,
+and update your records in real time.
+
+:::note
+Webhooks are currently available for invoices only. Payout webhook support is not yet available.
+:::
+
+## How it works
+
+1. You include a `webhookUrl` when creating an invoice
+2. Appreal sends a POST request to that URL on every invoice status change
+3. Your server receives the payload and returns a `200` response
+4. Your server calls `GET /invoices/:id` to verify the current status
+5. You take action based on the verified status
+
+:::warning
+Always verify the invoice status by calling the GET endpoint. Do not rely solely on the webhook
+payload to make business decisions. This protects against spoofed requests.
+:::
+
+## Webhook payload
+
+```json
+{
+  "id": "inv_abc123def456",
+  "number": "INV-2026-001",
+  "status": "COMPLETED",
+  "paymentStatus": "PAID",
+  "amount": "100.00",
+  "destinationCurrency": "USDT",
+  "customerEmail": "customer@example.com",
+  "reference": "order-12345",
+  "txHash": "0xabc123def456789...",
+  "webhookUrl": "https://yourstore.com/api/webhooks/appreal",
+  "createdAt": "2026-04-14T10:00:00.000Z",
+  "updatedAt": "2026-04-14T10:05:30.000Z"
+}
+```
+
+## Handling the webhook
+
+<Tabs>
+  <TabItem value="js" label="Node.js (Express)">
+
+```js
+app.post('/api/webhooks/appreal', async (req, res) => {
+  // Return 200 immediately
+  res.status(200).send('OK');
+
+  const { id, status } = req.body;
+
+  // Verify the invoice status via GET
+  const invoice = await fetch(
+    `https://api.appreal.com/api/business/v1/invoices/${id}`,
+    { headers: { 'x-api-key': process.env.API_KEY } }
+  ).then(r => r.json());
+
+  switch (invoice.status) {
+    case 'COMPLETED':
+      // Payment confirmed — fulfill the order
+      await fulfillOrder(invoice.reference);
+      break;
+    case 'EXPIRED':
+      // Payment window expired — cancel the order
+      await cancelOrder(invoice.reference);
+      break;
+    case 'CONFIRMING':
+      // Payment detected, waiting for confirmations
+      await markOrderProcessing(invoice.reference);
+      break;
+  }
+});
+```
+
+  </TabItem>
+  <TabItem value="curl" label="cURL (verify)">
+
+```bash
+# After receiving a webhook, verify the invoice status:
+curl https://api.appreal.com/api/business/v1/invoices/inv_abc123def456 \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+  </TabItem>
+</Tabs>
+
+## Event types
+
+| Event | When it fires |
+|---|---|
+| `invoice.lifecycle.created` | Invoice was created |
+| `invoice.payment.processing` | Payment detected, awaiting blockchain confirmations |
+| `invoice.payment.received` | Payment fully confirmed on the blockchain |
+| `invoice.lifecycle.expired` | Invoice expired without full payment |
+| `invoice.lifecycle.cancelled` | Invoice was cancelled by the merchant |
+| `invoice.status.changed` | Any status transition occurred |
+
+## Retry strategy
+
+If your server does not return a `200` status code, Appreal retries the webhook delivery with linear backoff:
+
+| Attempt | Delay after failure |
+|---|---|
+| 1 | Immediate |
+| 2 | 5 minutes |
+| 3 | 10 minutes |
+| 4 | 15 minutes |
+| ... | +5 minutes per attempt |
+| 21 | 100 minutes (final attempt) |
+
+After 21 failed attempts, the webhook is moved to a dead letter queue and will not be retried automatically.
+
+## Best practices
+
+- **Return 200 quickly** — Process the webhook asynchronously. Return a `200` response immediately, then handle the business logic in the background.
+- **Verify via GET** — Always call the GET endpoint to confirm the current status before taking action.
+- **Handle duplicates** — Webhooks may be delivered more than once. Use the `id` field to deduplicate.
+- **Use HTTPS** — Always use an HTTPS URL for your webhook endpoint.
+
+:::info What's Next
+Understand the full [Invoice Lifecycle](/checkout/invoice-lifecycle) to know what each status means.
+:::

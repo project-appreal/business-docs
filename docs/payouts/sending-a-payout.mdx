@@ -1,0 +1,280 @@
+---
+title: Sending a Payout
+description: Step-by-step guide to creating and sending a payout via the Business API
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Sending a Payout
+
+This guide walks you through the full payout flow: verify the recipient, preview fees, create the payout,
+and check its status.
+
+## Step 1: Inquire account
+
+Before sending a fiat payout, verify the recipient's bank account details. This confirms the account
+exists and returns the account holder's name.
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl -X POST https://api.appreal.com/api/business/v1/payout/inquire-account \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "bankCode": "014",
+    "accountNumber": "1234567890",
+    "destinationCurrencyAlias": "idr_bca",
+    "sourceCurrencyAlias": "usdt_polygon",
+    "networkSlug": "polygon",
+    "payoutProviderName": "intrajasa"
+  }'
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/payout/inquire-account',
+  {
+    method: 'POST',
+    headers: {
+      'x-api-key': process.env.API_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      bankCode: '014',
+      accountNumber: '1234567890',
+      destinationCurrencyAlias: 'idr_bca',
+      sourceCurrencyAlias: 'usdt_polygon',
+      networkSlug: 'polygon',
+      payoutProviderName: 'intrajasa',
+    }),
+  }
+);
+
+const data = await response.json();
+console.log(data.accountName); // "JOHN DOE"
+```
+
+  </TabItem>
+</Tabs>
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "accountName": "JOHN DOE",
+  "accountNumber": "1234567890",
+  "bankCode": "014"
+}
+```
+
+:::tip
+Skip this step for `CRYPTO_CRYPTO` payouts — wallet address validation is handled during payout creation.
+:::
+
+## Step 2: Get payout info
+
+Preview the fees, exchange rate, and total cost before committing to a payout:
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl -X POST https://api.appreal.com/api/business/v1/payout/payout-info \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 1000000,
+    "destinationCurrencyAlias": "idr_bca",
+    "sourceCurrencyAlias": "usdt_polygon",
+    "payoutType": "CRYPTO_FIAT",
+    "networkSlug": "polygon",
+    "payoutProviderName": "intrajasa"
+  }'
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/payout/payout-info',
+  {
+    method: 'POST',
+    headers: {
+      'x-api-key': process.env.API_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      amount: 1000000,
+      destinationCurrencyAlias: 'idr_bca',
+      sourceCurrencyAlias: 'usdt_polygon',
+      payoutType: 'CRYPTO_FIAT',
+      networkSlug: 'polygon',
+      payoutProviderName: 'intrajasa',
+    }),
+  }
+);
+
+const info = await response.json();
+console.log(info); // Fee breakdown, exchange rate, validation requirements
+```
+
+  </TabItem>
+</Tabs>
+
+The response includes the fee breakdown, exchange rate, and the final amount the recipient will receive.
+
+## Step 3: Create the payout
+
+Send the payout with all required details:
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl -X POST https://api.appreal.com/api/business/v1/payout \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "X-Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000" \
+  -d '{
+    "amount": 1000000,
+    "destinationCurrencyAlias": "idr_bca",
+    "sourceCurrencyAlias": "usdt_polygon",
+    "networkSlug": "polygon",
+    "payoutProviderName": "intrajasa",
+    "payoutType": "CRYPTO_FIAT",
+    "recipientName": "John Doe",
+    "recipientBankAccountNumber": "1234567890",
+    "recipientPhone": "+6281234567890",
+    "description": "March contractor payment"
+  }'
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/payout',
+  {
+    method: 'POST',
+    headers: {
+      'x-api-key': process.env.API_KEY,
+      'Content-Type': 'application/json',
+      'X-Idempotency-Key': '550e8400-e29b-41d4-a716-446655440000',
+    },
+    body: JSON.stringify({
+      amount: 1000000,
+      destinationCurrencyAlias: 'idr_bca',
+      sourceCurrencyAlias: 'usdt_polygon',
+      networkSlug: 'polygon',
+      payoutProviderName: 'intrajasa',
+      payoutType: 'CRYPTO_FIAT',
+      recipientName: 'John Doe',
+      recipientBankAccountNumber: '1234567890',
+      recipientPhone: '+6281234567890',
+      description: 'March contractor payment',
+    }),
+  }
+);
+
+const payout = await response.json();
+console.log(payout.id);     // "clx1abc2def3ghi4jkl5"
+console.log(payout.status); // "REQUESTED"
+```
+
+  </TabItem>
+</Tabs>
+
+### Request body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `amount` | number | Yes | Payout amount (max 8 decimal places) |
+| `destinationCurrencyAlias` | string | Yes | Destination currency alias (e.g., `idr_bca`, `eth_arbitrum`) |
+| `sourceCurrencyAlias` | string | Yes | Source currency alias (e.g., `usdt_polygon`) |
+| `networkSlug` | string | Yes | Blockchain network slug (e.g., `polygon`, `arbitrum-one`) |
+| `payoutProviderName` | string | Yes | Payout provider name (e.g., `intrajasa`) |
+| `payoutType` | string | Yes | One of: `CRYPTO_FIAT`, `CRYPTO_CRYPTO`, `FIAT_FIAT`, `FIAT_CRYPTO` |
+| `recipientId` | string | No | Existing recipient ID (use instead of inline recipient details) |
+| `recipientName` | string | No | Recipient's full name |
+| `recipientBankAccountNumber` | string | No | Bank account number (for fiat payouts) |
+| `recipientPhone` | string | No | Recipient's phone number |
+| `walletAddress` | string | No | Recipient wallet address (for crypto payouts) |
+| `description` | string | No | Payout description |
+| `metadata` | object | No | Custom key-value metadata |
+
+### Response
+
+```json
+{
+  "id": "clx1abc2def3ghi4jkl5",
+  "number": "PAY-2026-001",
+  "status": "REQUESTED",
+  "type": "CRYPTO_FIAT",
+  "amount": "1000000",
+  "exchangeRate": "16250.00",
+  "feeAmount": "5000",
+  "receivedAmount": "995000",
+  "createdAt": "2026-04-14T10:00:00.000Z",
+  "updatedAt": "2026-04-14T10:00:00.000Z",
+  "sourceCurrency": {
+    "name": "Tether",
+    "symbol": "USDT",
+    "currencyType": "CRYPTO"
+  },
+  "destinationCurrency": {
+    "name": "Indonesian Rupiah (BCA)",
+    "symbol": "IDR",
+    "currencyType": "FIAT"
+  }
+}
+```
+
+## Step 4: Check payout status
+
+Poll the payout status or wait for a webhook notification:
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl https://api.appreal.com/api/business/v1/payout/clx1abc2def3ghi4jkl5 \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/payout/clx1abc2def3ghi4jkl5',
+  {
+    headers: { 'x-api-key': process.env.API_KEY },
+  }
+);
+
+const payout = await response.json();
+console.log(payout.status); // "COMPLETED"
+```
+
+  </TabItem>
+</Tabs>
+
+You can also view the full status history:
+
+```bash
+curl https://api.appreal.com/api/business/v1/payout/clx1abc2def3ghi4jkl5/history \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+:::info What's Next
+Understand all the possible payout states in [Payout Lifecycle](/payouts/payout-lifecycle).
+:::

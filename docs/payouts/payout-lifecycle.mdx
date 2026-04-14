@@ -1,0 +1,151 @@
+---
+title: Payout Lifecycle
+description: Understand payout statuses and how they transition from creation to completion
+---
+
+# Payout Lifecycle
+
+Every payout moves through a series of statuses from creation to delivery. Understanding these
+statuses helps you track payouts and handle edge cases.
+
+## Payout statuses
+
+### `REQUESTED`
+
+The payout has been created and is waiting to be processed.
+
+- Your account balance has been **deducted** for the payout amount plus fees
+- The payout is queued for execution
+- This is the initial state for payouts
+
+### `PENDING`
+
+The payout is ready and waiting for the provider to begin processing.
+
+- The payout provider has accepted the request
+- Processing will begin automatically
+
+### `PROCESSING`
+
+The payout provider is actively processing the transfer.
+
+- For fiat payouts: the bank transfer is in progress
+- For crypto payouts: the blockchain transaction has been submitted
+- The provider's transaction ID is recorded
+
+### `CONFIRMING`
+
+For crypto payouts only — the blockchain transaction has been broadcast and is awaiting confirmations.
+
+- Similar to invoice `CONFIRMING` status
+- The transaction needs to reach the required number of block confirmations
+
+### `COMPLETED`
+
+The payout has been successfully delivered to the recipient. This is the **final success state**.
+
+- A `referenceText` (provider transaction reference) is recorded
+- The `receivedAmount` reflects the actual amount the recipient received
+- A webhook notification is sent
+
+### `FAILED`
+
+The payout failed during processing.
+
+- Your account balance is **refunded** for the full amount (including fees)
+- The failure reason is recorded
+- A webhook notification is sent
+- You can create a new payout to retry
+
+### `EXPIRED`
+
+The payout request expired before it could be processed.
+
+- This typically happens when a payout remains in `REQUESTED` status too long
+
+## Status transitions
+
+```
+REQUESTED ──────► PENDING ──────► PROCESSING ──────► COMPLETED
+                                      │
+                                      ▼
+                                  CONFIRMING ──────► COMPLETED
+                                      
+REQUESTED ──────► FAILED
+PENDING ────────► FAILED
+PROCESSING ─────► FAILED
+
+REQUESTED ──────► EXPIRED
+```
+
+### Key rules
+
+- `COMPLETED` and `FAILED` are **final states**
+- On failure, your balance is **automatically refunded**
+- `CONFIRMING` only applies to crypto payouts (blockchain confirmation)
+- The `EXPIRED` status is rare — most payouts move to `PROCESSING` quickly
+
+## Tracking status history
+
+Use the history endpoint to see the full progression of a payout:
+
+```bash
+curl https://api.appreal.com/api/business/v1/payout/clx1abc2def3ghi4jkl5/history \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "previousStatus": null,
+      "newStatus": "REQUESTED",
+      "source": "USER",
+      "action": "PAYOUT_CREATED",
+      "createdAt": "2026-04-14T10:00:00.000Z"
+    },
+    {
+      "previousStatus": "REQUESTED",
+      "newStatus": "PENDING",
+      "source": "SYSTEM",
+      "action": "PROCESS",
+      "createdAt": "2026-04-14T10:00:05.000Z"
+    },
+    {
+      "previousStatus": "PENDING",
+      "newStatus": "PROCESSING",
+      "source": "PROVIDER",
+      "action": "STATUS_UPDATE",
+      "createdAt": "2026-04-14T10:00:10.000Z"
+    },
+    {
+      "previousStatus": "PROCESSING",
+      "newStatus": "COMPLETED",
+      "source": "PROVIDER",
+      "action": "STATUS_UPDATE",
+      "createdAt": "2026-04-14T10:05:30.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "totalItems": 4,
+    "totalPages": 1
+  }
+}
+```
+
+| Field | Description |
+|---|---|
+| `previousStatus` | Status before the transition (`null` for initial creation) |
+| `newStatus` | Status after the transition |
+| `source` | Who triggered the change: `USER`, `SYSTEM`, `PROVIDER`, `WEBHOOK` |
+| `action` | What caused the change: `PAYOUT_CREATED`, `PROCESS`, `STATUS_UPDATE` |
+| `createdAt` | When the transition occurred |
+
+:::info What's Next
+Explore the [Supported Networks](/reference/supported-networks) and
+[Supported Currencies](/reference/supported-currencies) available for payouts and invoices.
+:::

@@ -1,0 +1,138 @@
+---
+title: Supported Currencies & Rates
+description: Cryptocurrencies, fiat currencies, and exchange rates available on Appreal
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Supported Currencies & Rates
+
+Appreal supports a range of cryptocurrencies across multiple networks, as well as fiat currencies
+for payouts and settlements.
+
+## Cryptocurrencies
+
+| Currency | Symbol | Decimals | Available Networks |
+|---|---|---|---|
+| Tether | USDT | 6 | Ethereum, Polygon, BNB Smart Chain, Arbitrum One, TRON |
+| USD Coin | USDC | 6 | Ethereum, Polygon, BNB Smart Chain, Arbitrum One |
+
+## Fiat currencies
+
+| Currency | Symbol | Description |
+|---|---|---|
+| Indonesian Rupiah | IDR | Used for fiat payouts in Indonesia |
+| US Dollar | USD | Used for settlement and exchange rate reference |
+
+## Currency aliases
+
+Each currency on a specific network has a unique **alias** — a human-readable identifier used in the
+Business API. Aliases follow the format `{symbol}_{network}` (e.g., `usdt_polygon`, `usdc_ethereum`).
+
+Use aliases when creating payouts or querying currencies via the Business API.
+
+## Listing currencies
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl https://api.appreal.com/api/business/v1/currencies \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/currencies',
+  {
+    headers: { 'x-api-key': process.env.API_KEY },
+  }
+);
+
+const currencies = await response.json();
+```
+
+  </TabItem>
+</Tabs>
+
+### Query parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `networkSlug` | string | Filter by network (e.g., `polygon`, `arbitrum-one`) |
+| `isActive` | boolean | Filter by active status |
+| `symbol` | string | Filter by currency symbol (e.g., `USDT`) |
+
+### Get a specific currency
+
+Retrieve a currency by its alias:
+
+```bash
+curl https://api.appreal.com/api/business/v1/currencies/usdt_polygon \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+## Exchange rates
+
+Appreal provides real-time exchange rates sourced from CoinGecko (primary) and CoinMarketCap (fallback).
+Rates are automatically refreshed when they become stale (older than 1 minute).
+
+### Get all exchange rates
+
+Retrieve exchange rates for all supported crypto assets:
+
+<Tabs>
+  <TabItem value="curl" label="cURL">
+
+```bash
+curl https://api.appreal.com/api/business/v1/exchange-rates \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+  </TabItem>
+  <TabItem value="js" label="Node.js">
+
+```js
+const response = await fetch(
+  'https://api.appreal.com/api/business/v1/exchange-rates',
+  {
+    headers: { 'x-api-key': process.env.API_KEY },
+  }
+);
+
+const rates = await response.json();
+```
+
+  </TabItem>
+</Tabs>
+
+### Get rates for a specific asset
+
+Retrieve exchange rates for a single cryptocurrency:
+
+```bash
+curl https://api.appreal.com/api/business/v1/exchange-rates/USDT \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### Query parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `currencies` | string | Filter destination currencies (comma-separated, e.g., `USD,IDR`) |
+
+### Rate providers
+
+| Provider | Priority | Description |
+|---|---|---|
+| CoinGecko | Primary | Real-time market data |
+| CoinMarketCap | Fallback | Used when CoinGecko is unavailable |
+
+:::tip
+Exchange rates include both **buy** and **sell** rates with configurable spreads.
+The rate you receive in payout info already accounts for the applicable spread.
+:::
