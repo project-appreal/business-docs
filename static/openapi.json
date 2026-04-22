@@ -2870,6 +2870,10 @@
             "type": "string",
             "description": "External ID used by the provider"
           },
+          "usageType": {
+            "type": "string",
+            "description": "Usage-type tag (identity — coexists per tag for the same provider+externalId)"
+          },
           "sellSpread": {
             "type": "number",
             "description": "Sell spread percentage"
@@ -2909,6 +2913,7 @@
           "currencyId",
           "providerId",
           "externalId",
+          "usageType",
           "sellSpread",
           "buySpread",
           "createdAt",
@@ -2930,6 +2935,15 @@
           "externalId": {
             "type": "string",
             "description": "External ID used by the provider (e.g., \"bitcoin\" for CoinGecko)"
+          },
+          "usageType": {
+            "type": "string",
+            "description": "Usage-type tag. Identity, not state — cannot be changed after creation. Omit to write the 'default' row.",
+            "enum": [
+              "default",
+              "autoramp"
+            ],
+            "default": "default"
           },
           "sellSpread": {
             "type": "number",
