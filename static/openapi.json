@@ -2810,6 +2810,11 @@
             "type": "string",
             "description": "Rate provider name",
             "example": "indodax"
+          },
+          "usageType": {
+            "type": "string",
+            "description": "Usage tag for this rate row (e.g., \"default\", \"autoramp\"). Default and autoramp variants of the same pair surface as separate rows because their spreads differ.",
+            "example": "default"
           }
         },
         "required": [
@@ -2821,7 +2826,8 @@
           "quoteCurrency",
           "baseCurrencyInfo",
           "quoteCurrencyInfo",
-          "lastUpdated"
+          "lastUpdated",
+          "usageType"
         ]
       },
       "ProviderInfoDto": {
